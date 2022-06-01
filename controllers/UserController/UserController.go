@@ -63,7 +63,7 @@ func UserLogin(ctx *gin.Context) {
  * @Author: William Wu
  * @Date: 2022/05/28 上午 09:14
  * @Param: UserModel UserRegister
- * @Return: JSON
+ * @Return: Json
  */
 func UserRegister(ctx *gin.Context) {
 	userEntity := UserModel.UserRegister{}
@@ -98,6 +98,16 @@ func UserRegister(ctx *gin.Context) {
 	}
 }
 
+/**
+ * @Descripttion: 用户更改密码 - Update User Password
+ * @Author: William Wu
+ * @Date: 2022/06/01 下午 07:38
+ * @Param: account (string)
+ * @Param: oldPassword (string)
+ * @Param: rePassword (string)
+ * @Param: newPassword (string)
+ * @Return: Json
+ */
 func UserUpdatePassword(ctx *gin.Context) {
 	userData := UserModel.UserUpdatePassword{}
 	ctx.Bind(&userData)
@@ -115,4 +125,15 @@ func UserUpdatePassword(ctx *gin.Context) {
 	} else {
 		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(203, "密码更改时产生异常 - Exception Occurred During Update Password", ""))
 	}
+}
+
+/**
+ * @Descripttion: 用户上传头像 - User Upload Avatar
+ * @Author: William Wu
+ * @Date: 2022/06/01 下午 07:53
+ * @Param: File
+ * @Return: Json
+ */
+func UploadAvatar(ctx *gin.Context) {
+
 }
