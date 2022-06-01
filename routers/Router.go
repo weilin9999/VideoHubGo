@@ -12,6 +12,9 @@ import (
 	"VideoHubGo/controllers/UserController"
 	"VideoHubGo/controllers/VideoController"
 	"VideoHubGo/middlewares/JwtMiddleware"
+	"VideoHubGo/utils/LogUtils"
+	"github.com/spf13/viper"
+	"os"
 
 	"github.com/gin-gonic/gin"
 )
@@ -25,6 +28,25 @@ import (
  */
 func Router(router *gin.Engine) *gin.Engine {
 
+	//读取配置文件 - Read The Configuration File
+	path, err := os.Getwd()
+	if err != nil {
+		LogUtils.Logger(err.Error())
+	}
+	config := viper.New()
+	config.AddConfigPath(path + "/configs")
+	config.SetConfigName("config")
+	config.SetConfigType("yaml")
+
+	//尝试进行配置读取 - Try Reading Configuration
+	if err := config.ReadInConfig(); err != nil {
+		LogUtils.Logger(err.Error())
+	}
+
+	maxSize := config.GetInt("files.maxSize") //设置最大文件上传大小 - Set Max Upload File Size
+
+	router.MaxMultipartMemory = int64(maxSize << 20)
+
 	//用户路由 - User Router
 	routerList1 := router.Group("/user")
 	{
@@ -33,9 +55,10 @@ func Router(router *gin.Engine) *gin.Engine {
 	}
 
 	//用户信息路由 - User Information Route
-	routerList2 := router.Group("/info") //.Use(JwtMiddleware.JwtMiddleware()) // JWT中间件 - JWT Middleware
+	routerList2 := router.Group("/userinfo") //.Use(JwtMiddleware.JwtMiddleware()) // JWT中间件 - JWT Middleware
 	{
-		routerList2.POST("/updatepassword", UserController.UserUpdatePassword) //用户修改密码控制器 - User Update Password Controller
+		routerList2.POST("/update/password", UserController.UserUpdatePassword) //用户修改密码控制器 - User Update Password Controller
+		routerList2.POST("/upload/avatar", UserController.UploadAvatar)         //用户头像上传控制器 - User Upload Avatar Controller
 	}
 
 	//后台路由 - Admin Route

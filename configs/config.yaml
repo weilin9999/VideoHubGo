@@ -28,8 +28,9 @@ redis:
 #文件池路径
 #File Pool Path
 files:
+  maxSize: 3072 #视频最大上传文件大小 - Max Video Upload Size
   user: #用户环境类 - User Path Class
-    userAvatar: "" #用户头像存放文件路径 - User Avatar Save Path
+    userAvatar: "F:/Desktop/GoTest/" #用户头像存放文件路径 - User Avatar Save Path
 
 #JWT 设置
 #JWT Configuration

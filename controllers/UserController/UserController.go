@@ -14,8 +14,12 @@ import (
 	"VideoHubGo/services/UserServices"
 	"VideoHubGo/utils/DataBaseUtils"
 	"VideoHubGo/utils/JsonUtils"
+	"VideoHubGo/utils/UploadUtils"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"path"
+	"path/filepath"
 	"regexp"
 )
 
@@ -135,5 +139,24 @@ func UserUpdatePassword(ctx *gin.Context) {
  * @Return: Json
  */
 func UploadAvatar(ctx *gin.Context) {
-
+	file, err := ctx.FormFile("file")
+	if err != nil {
+		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(201, "未上传文件 - Is not upload file", ""))
+		return
+	} else {
+		if file.Size > 2097152 { //小于2M文件 - Less Than 2M File Size
+			ctx.JSON(http.StatusOK, JsonUtils.JsonResult(202, "文件大于2M - Files larger than 2M Size", ""))
+			return
+		}
+		fileType := path.Ext(file.Filename)
+		if fileType != ".png" && fileType != ".jpg" && fileType != ".jpeg" && fileType != ".gif" {
+			fmt.Println(fileType)
+			ctx.JSON(http.StatusOK, JsonUtils.JsonResult(203, "文件类型不符合要求 - Document type does not meet requirements", ""))
+			return
+		}
+		fileName := "123" + fileType
+		filePath := filepath.Join(UploadUtils.GetUploadFilePath("user.userAvatar"), fileName)
+		ctx.SaveUploadedFile(file, filePath)
+		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "上传头像成功 - Upload Avatar Success", ""))
+	}
 }
