@@ -1,0 +1,48 @@
+#配置文件
+#Configuration
+
+#HTTP设置
+#HTTP Configuration
+http:
+  port: 80
+
+#MySQL 数据库连接配置文件
+#MySQL Database Connection Configuration File
+database:
+  host: 127.0.0.1 #数据库地址 - DataBase Address
+  port: 3306 #数据库端口 - DataBase Port
+  databasename: vhsql #数据库名 - DataBase Name
+  username: root #数据库账号 - DataBase Account
+  password: root #数据库密码 - DataBase Password
+
+#Redis 设置
+#Redis Configuration
+redis:
+  host: 127.0.0.1 #连接地址 - Connection Address
+  port: 6379 #端口 - Port
+  password: #密码 - Password
+  maxIdle: 16 #最初连接数 - Number Of Initial Connections
+  maxActive: 0 #最大连接数 - Max Connections
+  idleTimeout: 300 #连接关闭时间 - Connections Timeout
+
+#文件池路径
+#File Pool Path
+files:
+  user: #用户环境类 - User Path Class
+    userAvatar: "" #用户头像存放文件路径 - User Avatar Save Path
+
+#JWT 设置
+#JWT Configuration
+jwt:
+  key: 8681BF2D4E9A4FC9 #Token秘钥 - Token Key
+  issuer: WeiLin #颁发者签名 - Issuer Signature
+  subject: VHToken #签名主题 - Signature Theme
+  expireTime: 24 #过期时间(单位:小时) - Expired Time (Unit Hour)
+
+#用户密码加密盐值
+#User Password Encryption Salt Value
+#注意！请勿随意更改否则原先的用户密码无法登录
+#Attention! Do not change it at will, otherwise the original user password cannot be logged in
+
+salt:
+  value: "@@@WWL@@@"

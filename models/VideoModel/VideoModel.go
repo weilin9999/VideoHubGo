@@ -1,0 +1,53 @@
+/*
+ * @Descripttion: 视频模型 - Video Model
+ * @Author: William Wu
+ * @Date: 2022/05/27 下午 03:33
+ * @LastEditors: William Wu
+ * @LastEditTime: 2022/05/27 下午 03:33
+ */
+package VideoModel
+
+import (
+	"time"
+)
+
+/**
+ * @Descripttion: 视频模型 - Video Model
+ * @Author: William Wu
+ * @Date: 2022/05/27 下午 03:34
+ */
+type Video struct {
+	Vid         int
+	Detail      string
+	Watch       int
+	Vtime       string
+	Cid         int
+	Isdelete    int
+	Create_Time time.Time
+	Update_Time time.Time
+}
+
+/**
+ * @Descripttion: 视频Redis模型 - Video Redis Model
+ * @Author: William Wu
+ * @Date: 2022/05/27 下午 03:34
+ */
+type VideoRe struct {
+	Vid         int       `json:"vid"`
+	Detail      string    `json:"detail"`
+	Watch       int       `json:"watch"`
+	Vtime       string    `json:"vtime"`
+	Cid         int       `json:"cid"`
+	Create_Time time.Time `json:"create_time"`
+	Update_Time time.Time `json:"update_time"`
+}
+
+/**
+ * @Descripttion: 视频数据请求模型 - Video Data Request Model
+ * @Author: William Wu
+ * @Date: 2022/05/27 下午 03:34
+ */
+type VideoRequest struct {
+	Page int `json:"page"`
+	Size int `json:"size"`
+}
