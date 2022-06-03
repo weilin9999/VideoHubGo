@@ -12,7 +12,9 @@ import (
 	"VideoHubGo/controllers/UserController"
 	"VideoHubGo/controllers/VideoController"
 	"VideoHubGo/middlewares/JwtMiddleware"
+	"VideoHubGo/middlewares/NoRouteMiddlewares"
 	"VideoHubGo/utils/LogUtils"
+	"VideoHubGo/utils/UploadUtils"
 	"github.com/spf13/viper"
 	"os"
 
@@ -43,6 +45,9 @@ func Router(router *gin.Engine) *gin.Engine {
 		LogUtils.Logger(err.Error())
 	}
 
+	router.NoRoute(NoRouteMiddlewares.NoRouteHttp)   //设置网页错误返回信息 - Setting Http Error Return Message
+	router.NoMethod(NoRouteMiddlewares.NoMethodHttp) //设置网页错误返回信息 - Setting Http Error Return Message
+
 	maxSize := config.GetInt("files.maxSize") //设置最大文件上传大小 - Set Max Upload File Size
 
 	router.MaxMultipartMemory = int64(maxSize << 20)
@@ -55,7 +60,7 @@ func Router(router *gin.Engine) *gin.Engine {
 	}
 
 	//用户信息路由 - User Information Route
-	routerList2 := router.Group("/userinfo") //.Use(JwtMiddleware.JwtMiddleware()) // JWT中间件 - JWT Middleware
+	routerList2 := router.Group("/userinfo").Use(JwtMiddleware.JwtMiddleware()) // JWT中间件 - JWT Middleware
 	{
 		routerList2.POST("/update/password", UserController.UserUpdatePassword) //用户修改密码控制器 - User Update Password Controller
 		routerList2.POST("/upload/avatar", UserController.UploadAvatar)         //用户头像上传控制器 - User Upload Avatar Controller
@@ -71,6 +76,12 @@ func Router(router *gin.Engine) *gin.Engine {
 	routerList4 := router.Group("/video") //.Use(JwtMiddleware.JwtMiddleware()) // JWT中间件 - JWT Middleware
 	{
 		routerList4.POST("/list", VideoController.GetVideoList) //视频控制器 - Video Controller
+	}
+
+	//文件映射 - Map File
+	routerList5 := router.Group("/file")
+	{
+		routerList5.Static("/avatar", UploadUtils.GetUploadFilePath("user.userAvatar")) //映射头像文件夹 - Map avatar folder
 	}
 
 	return router

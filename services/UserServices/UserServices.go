@@ -11,6 +11,8 @@ import (
 	"VideoHubGo/models/UserModel"
 	"VideoHubGo/utils/DataBaseUtils"
 	"VideoHubGo/utils/EncryptionUtils"
+	uuid "github.com/satori/go.uuid"
+	"time"
 )
 
 var db = DataBaseUtils.GoDB()
@@ -78,6 +80,22 @@ func UpdatePassword(account string, oldPassword string, newPassword string) int 
 	encPassword := EncryptionUtils.ReversePassword(newPassword, userData.Salt)
 	db.Table("userdata").Where("uid = ?", userData.Uid).Update("password", encPassword)
 	return 1
+}
+
+/**
+ * @Descripttion: 用户头像保存到数据库 - User Avatar Save In DataBase
+ * @Author: William Wu
+ * @Date: 2022/06/02 上午 10:51
+ * @Param: userId (int)
+ * @Param: fileTpye (string)
+ * @Return: fileName (string)
+ */
+func UserUploadAvatar(userId int, fileTpye string) string {
+	uuidKey := uuid.NewV4()
+	nowTime := time.Now().Format("2006-1-2 15:04:05.000")
+	uuidValue := uuid.NewV5(uuidKey, nowTime).String()
+	db.Table("userdata").Where("uid = ?", userId).Update("avatar", uuidValue+fileTpye)
+	return uuidValue + fileTpye
 }
 
 /**

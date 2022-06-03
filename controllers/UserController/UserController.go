@@ -37,7 +37,10 @@ func UserLogin(ctx *gin.Context) {
 
 	userData := UserModel.User{}
 	ctx.Bind(&userData)
-
+	if userData.Account == "" || userData.Password == "" {
+		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(201, "请输入正确的账号密码 - Please enter the correct account password\n\n", ""))
+		return
+	}
 	isAlive := UserServices.FindUserAlive(userData.Account)
 	if isAlive {
 		userData = UserServices.LoginUser(userData.Account, userData.Password)
@@ -154,9 +157,11 @@ func UploadAvatar(ctx *gin.Context) {
 			ctx.JSON(http.StatusOK, JsonUtils.JsonResult(203, "文件类型不符合要求 - Document type does not meet requirements", ""))
 			return
 		}
-		fileName := "123" + fileType
+		userID := JwtMiddleware.GetTokenUID(ctx)
+		fileName := UserServices.UserUploadAvatar(userID, fileType)
 		filePath := filepath.Join(UploadUtils.GetUploadFilePath("user.userAvatar"), fileName)
 		ctx.SaveUploadedFile(file, filePath)
-		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "上传头像成功 - Upload Avatar Success", ""))
+		rData := map[string]interface{}{"avatar": fileName}
+		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "上传头像成功 - Upload Avatar Success", rData))
 	}
 }

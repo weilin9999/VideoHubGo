@@ -42,5 +42,8 @@ func main() {
 	//Gin服务启动 - Running Gin Service
 	r := gin.Default()
 	r = router.Router(r)
-	r.Run(":" + port)
+	err = r.Run(":" + port)
+	if err != nil {
+		LogUtils.Logger("服务启动失败 - Service Start Fail ：" + err.Error())
+	}
 }
