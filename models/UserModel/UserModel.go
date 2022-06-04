@@ -17,7 +17,7 @@ import (
  * @Date: 2022/05/23 下午 03:56
  */
 type User struct {
-	Uid         int    `gorm:"primaryKey"`
+	Uid         int    `gorm:"primaryKey" json:"uid"`
 	Account     string `json:"account"`
 	Username    string `json:"username"`
 	Password    string `json:"password"`
@@ -36,7 +36,7 @@ type User struct {
  * @Date: 2022/05/23 下午 03:56
  */
 type UserRegister struct {
-	Uid      int    `gorm:"primaryKey"`
+	Uid      int    `gorm:"primaryKey" json:"uid"`
 	Account  string `json:"account"`
 	Username string `json:"username"`
 	Password string `json:"password"`

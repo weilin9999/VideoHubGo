@@ -17,7 +17,7 @@ import (
  * @Date: 2022/05/27 下午 03:34
  */
 type Video struct {
-	Vid         int
+	Vid         int `gorm:"primaryKey" json:"vid"`
 	Detail      string
 	Watch       int
 	Vtime       string

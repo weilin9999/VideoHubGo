@@ -12,8 +12,8 @@ import (
 	"VideoHubGo/middlewares/JwtMiddleware"
 	"VideoHubGo/models/UserModel"
 	"VideoHubGo/services/UserServices"
-	"VideoHubGo/utils/DataBaseUtils"
 	"VideoHubGo/utils/JsonUtils"
+	"VideoHubGo/utils/LogUtils"
 	"VideoHubGo/utils/UploadUtils"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -22,8 +22,6 @@ import (
 	"path/filepath"
 	"regexp"
 )
-
-var db = DataBaseUtils.GoDB()
 
 /**
  * @Descripttion: 登录控制器 - Login Controller
@@ -160,7 +158,12 @@ func UploadAvatar(ctx *gin.Context) {
 		userID := JwtMiddleware.GetTokenUID(ctx)
 		fileName := UserServices.UserUploadAvatar(userID, fileType)
 		filePath := filepath.Join(UploadUtils.GetUploadFilePath("user.userAvatar"), fileName)
-		ctx.SaveUploadedFile(file, filePath)
+		err := ctx.SaveUploadedFile(file, filePath)
+		if err != nil {
+			ctx.JSON(http.StatusOK, JsonUtils.JsonResult(201, "在存储头像时出现了异常 - An exception occurred while storing the Avatar", ""))
+			LogUtils.Logger("异常错误-Error：头像保存处理时产生 - Generated when saving the Avatar ：" + err.Error())
+			return
+		}
 		rData := map[string]interface{}{"avatar": fileName}
 		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "上传头像成功 - Upload Avatar Success", rData))
 	}

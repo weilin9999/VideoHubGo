@@ -9,6 +9,7 @@ package router
 
 import (
 	"VideoHubGo/controllers/AdminController"
+	"VideoHubGo/controllers/ClassController"
 	"VideoHubGo/controllers/UserController"
 	"VideoHubGo/controllers/VideoController"
 	"VideoHubGo/middlewares/JwtMiddleware"
@@ -72,16 +73,22 @@ func Router(router *gin.Engine) *gin.Engine {
 		routerList3.POST("/login", AdminController.AdminLogin) //用户登录控制器 - User Login Controller
 	}
 
-	//视频路由 - Video Route
-	routerList4 := router.Group("/video") //.Use(JwtMiddleware.JwtMiddleware()) // JWT中间件 - JWT Middleware
+	//视频分类路由 - Video Class Route
+	routerList4 := router.Group("/class") //.Use(JwtMiddleware.JwtMiddleware()) // JWT中间件 - JWT Middleware
 	{
-		routerList4.POST("/list", VideoController.GetVideoList) //视频控制器 - Video Controller
+		routerList4.POST("/list", ClassController.GetClassList) //视频控制器 - Video Controller
+	}
+
+	//视频路由 - Video Route
+	routerList5 := router.Group("/video") //.Use(JwtMiddleware.JwtMiddleware()) // JWT中间件 - JWT Middleware
+	{
+		routerList5.POST("/list", VideoController.GetVideoList) //视频控制器 - Video Controller
 	}
 
 	//文件映射 - Map File
-	routerList5 := router.Group("/file")
+	routerList6 := router.Group("/file")
 	{
-		routerList5.Static("/avatar", UploadUtils.GetUploadFilePath("user.userAvatar")) //映射头像文件夹 - Map avatar folder
+		routerList6.Static("/avatar", UploadUtils.GetUploadFilePath("user.userAvatar")) //映射头像文件夹 - Map avatar folder
 	}
 
 	return router

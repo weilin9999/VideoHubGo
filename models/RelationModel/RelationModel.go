@@ -13,7 +13,7 @@ package RelationModel
  * @Date: 2022/05/27 下午 03:48
  */
 type Relation struct {
-	Id       int `gorm:"primaryKey"`
+	Id       int `gorm:"primaryKey" json:"id"`
 	Uid      int
 	Vid      int
 	Isdelete int

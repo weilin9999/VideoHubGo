@@ -11,13 +11,10 @@ import (
 	"VideoHubGo/cache/VideoCache"
 	"VideoHubGo/models/VideoModel"
 	"VideoHubGo/services/VideoServices"
-	"VideoHubGo/utils/DataBaseUtils"
 	"VideoHubGo/utils/JsonUtils"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
-
-var db = DataBaseUtils.GoDB()
 
 /**
  * @Descripttion: 获取视频数据 - Get Video List Data
@@ -49,10 +46,5 @@ func GetVideoList(ctx *gin.Context) {
 		VideoCache.VideoWriteListCache(videoData)
 	}
 
-	if videoData != nil {
-		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "200", videoData))
-	} else {
-		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "200", videoData))
-	}
-
+	ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "200", videoData))
 }
