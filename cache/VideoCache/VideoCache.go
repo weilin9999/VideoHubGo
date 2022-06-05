@@ -26,17 +26,8 @@ var conn = RedisUtils.RedisPool.Get()
  */
 func VideoWriteListCache(videoData []VideoModel.VideoRe) {
 
-	for _, v := range videoData {
-		tempVideo := VideoModel.VideoRe{
-			Vid:         v.Vid,
-			Detail:      v.Detail,
-			Watch:       v.Watch,
-			Vtime:       v.Vtime,
-			Cid:         v.Cid,
-			Create_Time: v.Create_Time,
-			Update_Time: v.Update_Time,
-		}
-		jsonTemp, err := json.Marshal(tempVideo)
+	for k, v := range videoData {
+		jsonTemp, err := json.Marshal(videoData[k])
 		if err != nil {
 			LogUtils.Logger("[Redis操作]Json转换失败")
 		}

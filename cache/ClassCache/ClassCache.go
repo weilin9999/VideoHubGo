@@ -26,12 +26,8 @@ var conn = RedisUtils.RedisPool.Get()
  */
 func ClassWriteCache(classData []ClassModel.ClassRe) {
 
-	for _, v := range classData {
-		tempClass := ClassModel.ClassRe{
-			Cid:       v.Cid,
-			Classname: v.Classname,
-		}
-		jsonTemp, err := json.Marshal(tempClass)
+	for k, v := range classData {
+		jsonTemp, err := json.Marshal(classData[k])
 		if err != nil {
 			LogUtils.Logger("[Redis操作]Json转换失败")
 		}
