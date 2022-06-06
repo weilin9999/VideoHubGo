@@ -24,6 +24,33 @@ var db = DataBaseUtils.GoDB()
  */
 func FindVideoList(size int, offset int) []VideoModel.VideoRe {
 	var videoData []VideoModel.VideoRe
-	db.Table("videodata").Where("isdelete = ?", 0).Order("create_time ASC").Limit(size).Offset(offset).Find(&videoData)
+	db.Table("videodata").Where("isdelete = ?", 0).Order("vid DESC").Limit(size).Offset(offset).Find(&videoData)
+	return videoData
+}
+
+/**
+ * @Descripttion: 查询视频数据总数 - Count Video List
+ * @Author: William Wu
+ * @Date: 2022/06/05 下午 01:03
+ * @Return: count (int)
+ */
+func GetCountVideoList() int {
+	var count int64
+	db.Select("vid").Table("videodata").Where("isdelete = ?", 0).Count(&count)
+	return int(count)
+}
+
+/**
+ * @Descripttion: 从数据中查找分类的视频数据 - Find classified video data from data
+ * @Author: William Wu
+ * @Date: 2022/06/05 下午 06:28
+ * @Param: class (int)
+ * @Param: size (int)
+ * @Param: offset (int)
+ * @Return: VideoModel VideoRe
+ */
+func FindVideoInClass(class int, size int, offset int) []VideoModel.VideoRe {
+	var videoData []VideoModel.VideoRe
+	db.Table("videodata").Where("isdelete = ? and cid = ?", 0, class).Order("vid DESC").Limit(size).Offset(offset).Find(&videoData)
 	return videoData
 }
