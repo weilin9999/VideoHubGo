@@ -11,3 +11,4 @@
 2022/06/04 11:32:45 [Redis操作]Redis存储失败-VideoWriteList操作中
 2022/06/04 11:35:08 [Redis操作]Redis存储失败-VideoWriteList操作中
 2022/06/05 13:32:47 [Redis操作] 获取视频总数时出现异常：redigo: nil returned
+2022/06/06 16:24:21 [Redis操作] 获取视频总数时出现异常：redigo: nil returned

@@ -52,7 +52,7 @@ func VideoGetListCache(page int, size int) []VideoModel.VideoRe {
 
 	startId := (page * size) - size
 	endId := page * size
-	count := VideoGetCount()
+	count := VideoGetCount() + 1000
 
 	res2, err := redis.Values(conn.Do("zrangebyscore", "videodata", (count - endId), (count - startId)))
 	var tempVideo []VideoModel.VideoRe
@@ -86,6 +86,14 @@ func VideoGetCount() int {
 	count, err := redis.Int(conn.Do("get", "videocount"))
 	if err != nil {
 		LogUtils.Logger("[Redis操作] 获取视频总数时出现异常：" + err.Error())
+	}
+	return count
+}
+
+func GetReidsVideoListCount() int {
+	count, err := redis.Int(conn.Do("zcard", "videodata"))
+	if err != nil {
+		LogUtils.Logger("[Redis操作] 获取Rediso中的视频总数时出现异常：" + err.Error())
 	}
 	return count
 }
