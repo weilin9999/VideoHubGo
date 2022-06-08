@@ -39,7 +39,6 @@ type VideoRe struct {
 	Vtime       string    `json:"vtime"`
 	Cid         int       `json:"cid"`
 	Create_Time time.Time `json:"create_time"`
-	Update_Time time.Time `json:"update_time"`
 }
 
 /**
@@ -48,6 +47,17 @@ type VideoRe struct {
  * @Date: 2022/05/27 下午 03:34
  */
 type VideoRequest struct {
+	Page int `json:"page"`
+	Size int `json:"size"`
+}
+
+/**
+ * @Descripttion: 视频数据请求模型Class - Video Data Request Model Class
+ * @Author: William Wu
+ * @Date: 2022/05/27 下午 03:34
+ */
+type VideoRequestClass struct {
+	Cid  int `json:"cid"`
 	Page int `json:"page"`
 	Size int `json:"size"`
 }

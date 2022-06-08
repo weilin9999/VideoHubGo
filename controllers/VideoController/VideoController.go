@@ -65,5 +65,25 @@ func GetVideoList(ctx *gin.Context) {
  * @Return: Json
  */
 func GetVideoClassList(ctx *gin.Context) {
-
+	requestBody := VideoModel.VideoRequestClass{}
+	ctx.BindJSON(&requestBody)
+	cid := requestBody.Cid
+	page := requestBody.Page
+	size := requestBody.Size
+	if page < 1 {
+		page = 1
+	}
+	if size < 20 {
+		size = 20
+	}
+	offset := size * (page - 1)
+	count := VideoCache.VideoGetClassCount(cid)
+	if count == 0 {
+		tempCount := VideoServices.GetCountVideoClassList(cid)
+		VideoCache.VideoSaveClassCountList(cid, tempCount)
+		count = tempCount
+	}
+	var videoData = VideoServices.FindVideoInClass(cid, size, offset)
+	rData := map[string]interface{}{"list": videoData, "count": count}
+	ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "200", rData))
 }

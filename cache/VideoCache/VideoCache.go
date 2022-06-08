@@ -14,6 +14,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gomodule/redigo/redis"
+	"strconv"
 )
 
 var conn = RedisUtils.RedisPool.Get()
@@ -82,6 +83,11 @@ func VideoSaveCountList(count int) {
 	}
 }
 
+/**
+ * @Descripttion: 从Redis获取视频总数 - Total number of videos obtained from redis
+ * @Author: William Wu
+ * @Date: 2022/06/07 下午 03:21
+ */
 func VideoGetCount() int {
 	count, err := redis.Int(conn.Do("get", "videocount"))
 	if err != nil {
@@ -90,10 +96,41 @@ func VideoGetCount() int {
 	return count
 }
 
+/**
+ * @Descripttion: 从已经存储的Redis视频数据获取集合总数 - Total number of collections obtained from stored redis video data
+ * @Author: William Wu
+ * @Date: 2022/06/07 下午 03:21
+ */
 func GetReidsVideoListCount() int {
 	count, err := redis.Int(conn.Do("zcard", "videodata"))
 	if err != nil {
 		LogUtils.Logger("[Redis操作] 获取Rediso中的视频总数时出现异常：" + err.Error())
+	}
+	return count
+}
+
+/**
+ * @Descripttion: 存入分类视频总数 - Save Class Video Count
+ * @Author: William Wu
+ * @Date: 2022/06/05 下午 01:14
+ * @Param: count (int)
+ */
+func VideoSaveClassCountList(cid int, count int) {
+	_, err := conn.Do("set", "classcount"+strconv.Itoa(cid), count)
+	if err != nil {
+		LogUtils.Logger("[Redis操作] 存储视频类型总数时出现异常：" + err.Error())
+	}
+}
+
+/**
+ * @Descripttion: 从Redis获取类型视频总数 - Total number of Class videos obtained from redis
+ * @Author: William Wu
+ * @Date: 2022/06/07 下午 03:21
+ */
+func VideoGetClassCount(cid int) int {
+	count, err := redis.Int(conn.Do("get", "classcount"+strconv.Itoa(cid)))
+	if err != nil {
+		LogUtils.Logger("[Redis操作] 获取视频类型总数时出现异常：" + err.Error())
 	}
 	return count
 }

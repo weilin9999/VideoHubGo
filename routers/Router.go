@@ -82,7 +82,8 @@ func Router(router *gin.Engine) *gin.Engine {
 	//视频路由 - Video Route
 	routerList5 := router.Group("/video") //.Use(JwtMiddleware.JwtMiddleware()) // JWT中间件 - JWT Middleware
 	{
-		routerList5.POST("/list", VideoController.GetVideoList) //视频控制器 - Video Controller
+		routerList5.POST("/list", VideoController.GetVideoList)            //总视频控制器 - Center Video Controller
+		routerList5.POST("/class/list", VideoController.GetVideoClassList) //视频类型控制器 - Video Class Controller
 	}
 
 	//文件映射 - Map File

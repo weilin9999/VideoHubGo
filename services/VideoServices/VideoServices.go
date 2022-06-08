@@ -44,13 +44,26 @@ func GetCountVideoList() int {
  * @Descripttion: 从数据中查找分类的视频数据 - Find classified video data from data
  * @Author: William Wu
  * @Date: 2022/06/05 下午 06:28
- * @Param: class (int)
+ * @Param: cid (int)
  * @Param: size (int)
  * @Param: offset (int)
  * @Return: VideoModel VideoRe
  */
-func FindVideoInClass(class int, size int, offset int) []VideoModel.VideoRe {
+func FindVideoInClass(cid int, size int, offset int) []VideoModel.VideoRe {
 	var videoData []VideoModel.VideoRe
-	db.Table("videodata").Where("isdelete = ? and cid = ?", 0, class).Order("vid DESC").Limit(size).Offset(offset).Find(&videoData)
+	db.Table("videodata").Where("isdelete = ? and cid = ?", 0, cid).Order("vid DESC").Limit(size).Offset(offset).Find(&videoData)
 	return videoData
+}
+
+/**
+ * @Descripttion: 查询相关类型视频数据总数 - Count Class Video List
+ * @Author: William Wu
+ * @Date: 2022/06/05 下午 01:03
+ * @Param: cid (int)
+ * @Return: count (int)
+ */
+func GetCountVideoClassList(cid int) int {
+	var count int64
+	db.Select("vid").Table("videodata").Where("isdelete = ? and cid = ?", 0, cid).Count(&count)
+	return int(count)
 }
