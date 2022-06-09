@@ -67,3 +67,24 @@ func GetCountVideoClassList(cid int) int {
 	db.Select("vid").Table("videodata").Where("isdelete = ? and cid = ?", 0, cid).Count(&count)
 	return int(count)
 }
+
+/**
+ * @Descripttion: 搜索视频内容 - Search Video List
+ * @Author: William Wu
+ * @Date: 2022/06/08 下午 03:58
+ * @Param: cid (int)
+ * @Param: key (string)
+ * @Param: size (int)
+ * @Param: offset (int)
+ * @Return: VideoModel VideoRe
+ */
+func SearchVideoList_Class(cid int, key string, size int, offset int) ([]VideoModel.VideoRe, int) {
+	var videoData []VideoModel.VideoRe
+	var count int64
+	if cid == 0 {
+		db.Table("videodata").Where("isdelete = ? AND detail LIKE ?", 0, key+"%").Order("vid DESC").Limit(size).Offset(offset).Count(&count).Find(&videoData)
+	} else {
+		db.Table("videodata").Where("isdelete = ? AND cid = ? AND detail LIKE ?", 0, cid, key+"%").Order("vid DESC").Limit(size).Count(&count).Offset(offset).Find(&videoData)
+	}
+	return videoData, int(count)
+}

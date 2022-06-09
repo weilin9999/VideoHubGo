@@ -36,6 +36,9 @@ func GetVideoList(ctx *gin.Context) {
 	if size < 20 {
 		size = 20
 	}
+	if size > 40 {
+		size = 20
+	}
 	offset := size * (page - 1)
 
 	var videoData = VideoCache.VideoGetListCache(page, size)
@@ -76,6 +79,9 @@ func GetVideoClassList(ctx *gin.Context) {
 	if size < 20 {
 		size = 20
 	}
+	if size > 40 {
+		size = 20
+	}
 	offset := size * (page - 1)
 	count := VideoCache.VideoGetClassCount(cid)
 	if count == 0 {
@@ -84,6 +90,41 @@ func GetVideoClassList(ctx *gin.Context) {
 		count = tempCount
 	}
 	var videoData = VideoServices.FindVideoInClass(cid, size, offset)
+	rData := map[string]interface{}{"list": videoData, "count": count}
+	ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "200", rData))
+}
+
+/**
+ * @Descripttion: 搜索视频 - Search Video
+ * @Author: William Wu
+ * @Date: 2022/06/08 下午 02:29
+ * @Param: 分类ID - cid (int)
+ * @Param: 搜搜关键字 - key (string)
+ * @Param: 分页 - page (int)
+ * @Param: 数据条数 - size (int)
+ * @Return: Json
+ */
+func SearchVideo_Class(ctx *gin.Context) {
+	requestBody := VideoModel.VideoRequestSearch{}
+	ctx.BindJSON(&requestBody)
+	cid := requestBody.Cid
+	key := requestBody.Key
+	page := requestBody.Page
+	size := requestBody.Size
+	if page < 1 {
+		page = 1
+	}
+	if size < 20 {
+		size = 20
+	}
+	if size > 40 {
+		size = 20
+	}
+	if cid < 0 {
+		cid = 0
+	}
+	offset := size * (page - 1)
+	var videoData, count = VideoServices.SearchVideoList_Class(cid, key, size, offset)
 	rData := map[string]interface{}{"list": videoData, "count": count}
 	ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "200", rData))
 }

@@ -61,3 +61,15 @@ type VideoRequestClass struct {
 	Page int `json:"page"`
 	Size int `json:"size"`
 }
+
+/**
+ * @Descripttion: 视频数据请求搜索模型Class - Video Data Request Search Model Class
+ * @Author: William Wu
+ * @Date: 2022/06/08 下午 03:53
+ */
+type VideoRequestSearch struct {
+	Cid  int    `json:"cid"`
+	Key  string `json:"key"`
+	Page int    `json:"page"`
+	Size int    `json:"size"`
+}
