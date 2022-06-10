@@ -36,11 +36,16 @@ type User struct {
  * @Date: 2022/05/23 下午 03:56
  */
 type UserRegister struct {
-	Uid      int    `gorm:"primaryKey" json:"uid"`
-	Account  string `json:"account"`
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Salt     string
+	Uid         int    `gorm:"primaryKey" json:"uid"`
+	Account     string `json:"account"`
+	Username    string `json:"username"`
+	Password    string `json:"password"`
+	Salt        string
+	Isadmin     int
+	Isuploader  int
+	Isdelete    int
+	Avatar      string
+	Create_Time time.Time
 }
 
 /**

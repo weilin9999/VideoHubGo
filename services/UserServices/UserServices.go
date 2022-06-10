@@ -57,8 +57,21 @@ func RegisterUser(account string, password string, username string) int {
 	userData.Salt = salt
 	userData.Username = username
 	userData.Account = account
-	if err := db.Table("userdata").Create(&userData).Error; err != nil {
-		return 0
+	userData.Isdelete = 0
+	userData.Isuploader = 0
+	userData.Isadmin = 0
+	userData.Avatar = ""
+	isDeleteUid := FindIsDeleteUser()
+	if isDeleteUid != 0 {
+		userData.Uid = isDeleteUid
+		userData.Create_Time = time.Now()
+		if err := db.Table("userdata").Save(&userData).Error; err != nil {
+			return 4
+		}
+	} else {
+		if err := db.Table("userdata").Create(&userData).Error; err != nil {
+			return 0
+		}
 	}
 	return 1
 }
@@ -107,7 +120,7 @@ func UserUploadAvatar(userId int, fileTpye string) string {
  */
 func FindUserAlive(account string) bool {
 	tempData := UserModel.User{}
-	db.Select("uid").Table("userdata").First(&tempData, "account = ? ", account)
+	db.Select("uid").Table("userdata").First(&tempData, "account = ?", account)
 	return tempData.Uid != 0
 }
 
@@ -137,4 +150,29 @@ func FindUserNameAlive(username string) bool {
 	tempData := UserModel.User{}
 	db.Select("uid").Table("userdata").First(&tempData, "username = ? ", username)
 	return tempData.Uid != 0
+}
+
+/**
+ * @Descripttion: 查找已经被注销删除的用户 - Find Is Deleted User Info
+ * @Author: William Wu
+ * @Date: 2022/06/09 下午 03:56
+ * @Return: uid (int)
+ */
+func FindIsDeleteUser() int {
+	userData := UserModel.User{}
+	db.Select("uid").Table("userdata").First(&userData, "isdelete = ?", 1)
+	return userData.Uid
+}
+
+/**
+ * @Descripttion: 根据用户查询是否被锁定 - Whether it is locked according to user query
+ * @Author: William Wu
+ * @Date: 2022/06/09 下午 04:27
+ * @Param: Account (string)
+ * @Return: isdelete (int)
+ */
+func FindIsDeleteUserLogin(account string) int {
+	userData := UserModel.User{}
+	db.Select("uid").Table("userdata").First(&userData, "account = ?", account)
+	return userData.Isdelete
 }

@@ -10,6 +10,7 @@ package router
 import (
 	"VideoHubGo/controllers/AdminController"
 	"VideoHubGo/controllers/ClassController"
+	"VideoHubGo/controllers/RelationController"
 	"VideoHubGo/controllers/UserController"
 	"VideoHubGo/controllers/VideoController"
 	"VideoHubGo/middlewares/JwtMiddleware"
@@ -87,10 +88,16 @@ func Router(router *gin.Engine) *gin.Engine {
 		routerList5.POST("/search/list", VideoController.SearchVideo_Class) //视频搜索控制器 - Video Search Controller
 	}
 
-	//文件映射 - Map File
-	routerList6 := router.Group("/file")
+	//用户收藏路由 - Relation Route
+	routerList6 := router.Group("/relation").Use(JwtMiddleware.JwtMiddleware()) // JWT中间件 - JWT Middleware
 	{
-		routerList6.Static("/avatar", UploadUtils.GetUploadFilePath("user.userAvatar")) //映射头像文件夹 - Map avatar folder
+		routerList6.POST("/list", RelationController.GetRelationList) //总收藏控制器 - Center Relation Controller
+	}
+
+	//文件映射 - Map File
+	routerList7 := router.Group("/file")
+	{
+		routerList7.Static("/avatar", UploadUtils.GetUploadFilePath("user.userAvatar")) //映射头像文件夹 - Map avatar folder
 	}
 
 	return router

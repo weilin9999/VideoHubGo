@@ -14,7 +14,17 @@ package RelationModel
  */
 type Relation struct {
 	Id       int `gorm:"primaryKey" json:"id"`
-	Uid      int
-	Vid      int
+	Uid      int `json:"uid"`
+	Vid      int `json:"vid"`
 	Isdelete int
+}
+
+/**
+ * @Descripttion: Relation普通类型请求体 - Relation common type request struct
+ * @Author: William Wu
+ * @Date: 2022/06/09 下午 03:25
+ */
+type RelationRequest struct {
+	Page int `json:"page"`
+	Size int `json:"size"`
 }

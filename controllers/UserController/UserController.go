@@ -47,6 +47,12 @@ func UserLogin(ctx *gin.Context) {
 		return
 	}
 
+	isDelete := UserServices.FindIsDeleteUserLogin(userData.Account)
+	if isDelete == 1 {
+		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(206, "该用户已被锁定 - The user is locked", ""))
+		return
+	}
+
 	if userData.Uid == 0 {
 		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(204, "密码错误 - Password Error", ""))
 		return
@@ -98,6 +104,8 @@ func UserRegister(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(202, "注册账号已存在 - Register Account Already Exists ", ""))
 	} else if res == 3 {
 		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(203, "注册用户名已存在 - Register Username Already Exists ", ""))
+	} else if res == 4 {
+		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(203, "注册个更新时产生异常 - Exception Occurred During Registration Update", ""))
 	} else {
 		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(204, "注册时产生异常 - Exception Occurred During Registration", ""))
 	}
