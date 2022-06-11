@@ -84,7 +84,7 @@ func SearchVideoList_Class(cid int, key string, size int, offset int) ([]VideoMo
 	if cid == 0 {
 		db.Table("videodata").Where("isdelete = ? AND detail LIKE ?", 0, key+"%").Order("vid DESC").Limit(size).Offset(offset).Count(&count).Find(&videoData)
 	} else {
-		db.Table("videodata").Where("isdelete = ? AND cid = ? AND detail LIKE ?", 0, cid, key+"%").Order("vid DESC").Limit(size).Count(&count).Offset(offset).Find(&videoData)
+		db.Table("videodata").Where("isdelete = ? AND cid = ? AND detail LIKE ?", 0, cid, "%"+key+"%").Order("vid DESC").Limit(size).Count(&count).Offset(offset).Find(&videoData)
 	}
 	return videoData, int(count)
 }

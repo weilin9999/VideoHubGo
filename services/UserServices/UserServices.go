@@ -11,6 +11,7 @@ import (
 	"VideoHubGo/models/UserModel"
 	"VideoHubGo/utils/DataBaseUtils"
 	"VideoHubGo/utils/EncryptionUtils"
+	"VideoHubGo/utils/LogUtils"
 	uuid "github.com/satori/go.uuid"
 	"time"
 )
@@ -66,10 +67,12 @@ func RegisterUser(account string, password string, username string) int {
 		userData.Uid = isDeleteUid
 		userData.Create_Time = time.Now()
 		if err := db.Table("userdata").Save(&userData).Error; err != nil {
+			LogUtils.Logger("[数据库错误 SQL Error]在操作用户注册更新时产生异常：" + err.Error())
 			return 4
 		}
 	} else {
 		if err := db.Table("userdata").Create(&userData).Error; err != nil {
+			LogUtils.Logger("[数据库错误 SQL Error]在操作用户注册创建时产生异常：" + err.Error())
 			return 0
 		}
 	}

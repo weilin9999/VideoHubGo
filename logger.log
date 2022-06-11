@@ -15,3 +15,4 @@
 2022/06/07 15:29:33 [Redis操作] 获取视频类型总数时出现异常：redigo: nil returned
 2022/06/07 15:29:52 [Redis操作] 获取视频类型总数时出现异常：redigo: nil returned
 2022/06/07 15:29:59 [Redis操作] 获取视频类型总数时出现异常：redigo: nil returned
+2022/06/10 15:02:40 [数据库错误SQL Error] 在用户增加视频查看次数时产生：Error 1366: Incorrect integer value: 'watch+1' for column 'watch' at row 1

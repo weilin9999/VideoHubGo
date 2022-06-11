@@ -39,6 +39,7 @@ func GetVideoList(ctx *gin.Context) {
 	if size > 40 {
 		size = 20
 	}
+
 	offset := size * (page - 1)
 
 	var videoData = VideoCache.VideoGetListCache(page, size)
@@ -82,6 +83,9 @@ func GetVideoClassList(ctx *gin.Context) {
 	if size > 40 {
 		size = 20
 	}
+	if cid < 0 {
+		cid = 0
+	}
 	offset := size * (page - 1)
 	count := VideoCache.VideoGetClassCount(cid)
 	if count == 0 {
@@ -104,7 +108,7 @@ func GetVideoClassList(ctx *gin.Context) {
  * @Param: 数据条数 - size (int)
  * @Return: Json
  */
-func SearchVideo_Class(ctx *gin.Context) {
+func SearchVideoClassList(ctx *gin.Context) {
 	requestBody := VideoModel.VideoRequestSearch{}
 	ctx.BindJSON(&requestBody)
 	cid := requestBody.Cid
