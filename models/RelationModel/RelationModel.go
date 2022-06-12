@@ -28,3 +28,36 @@ type RelationRequest struct {
 	Page int `json:"page"`
 	Size int `json:"size"`
 }
+
+/**
+ * @Descripttion: Relation普通类型分类请求体 - Relation common type request Class struct
+ * @Author: William Wu
+ * @Date: 2022/06/10 上午 10:30
+ */
+type RelationRequestClass struct {
+	Cid  int `json:"cid"`
+	Page int `json:"page"`
+	Size int `json:"size"`
+}
+
+/**
+ * @Descripttion: Relation普通类型搜索请求体 - Relation common type request Saerch struct
+ * @Author: William Wu
+ * @Date: 2022/06/10 上午 10:38
+ */
+type RelationRequestSearch struct {
+	Cid  int    `json:"cid"`
+	Key  string `json:"key"`
+	Page int    `json:"page"`
+	Size int    `json:"size"`
+}
+
+/**
+ * @Descripttion: Relation添加删除请求体 - Relation Add Delete Request Struct
+ * @Author: William Wu
+ * @Date: 2022/06/10 下午 03:34
+ */
+type RelationRequestBody struct {
+	Uid int `json:"uid"`
+	Vid int `json:"vid"`
+}
