@@ -34,7 +34,11 @@ import (
 func UserLogin(ctx *gin.Context) {
 
 	userData := UserModel.User{}
-	ctx.Bind(&userData)
+	err := ctx.BindJSON(&userData)
+	if err != nil {
+		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "600", "参数错误 - Parameter error"))
+		return
+	}
 	if userData.Account == "" || userData.Password == "" {
 		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(201, "请输入正确的账号密码 - Please enter the correct account password\n\n", ""))
 		return
@@ -78,7 +82,11 @@ func UserLogin(ctx *gin.Context) {
  */
 func UserRegister(ctx *gin.Context) {
 	userEntity := UserModel.UserRegister{}
-	ctx.Bind(&userEntity)
+	err := ctx.BindJSON(&userEntity)
+	if err != nil {
+		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "600", "参数错误 - Parameter error"))
+		return
+	}
 	if ok, _ := regexp.MatchString("^[a-zA-Z0-9]{4,16}$", userEntity.Account); !ok {
 		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(205, "账号不符合要求! - Account is not allow", ""))
 		return
@@ -123,7 +131,11 @@ func UserRegister(ctx *gin.Context) {
  */
 func UserUpdatePassword(ctx *gin.Context) {
 	userData := UserModel.UserUpdatePassword{}
-	ctx.Bind(&userData)
+	err := ctx.BindJSON(&userData)
+	if err != nil {
+		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "600", "参数错误 - Parameter error"))
+		return
+	}
 	if userData.Password != userData.RePassword {
 		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(201, "两次密码不一致! - Second is Inconsistent", ""))
 		return
@@ -165,7 +177,7 @@ func UploadAvatar(ctx *gin.Context) {
 		}
 		userID := JwtMiddleware.GetTokenUID(ctx)
 		fileName := UserServices.UserUploadAvatar(userID, fileType)
-		filePath := filepath.Join(UploadUtils.GetUploadFilePath("user.userAvatar"), fileName)
+		filePath := filepath.Join(UploadUtils.GetFilePath("user.userAvatar"), fileName)
 		err := ctx.SaveUploadedFile(file, filePath)
 		if err != nil {
 			ctx.JSON(http.StatusOK, JsonUtils.JsonResult(201, "在存储头像时出现了异常 - An exception occurred while storing the Avatar", ""))

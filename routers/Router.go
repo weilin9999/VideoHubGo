@@ -81,6 +81,7 @@ func Router(router *gin.Engine) *gin.Engine {
 		routerList4.POST("/list", VideoController.GetVideoList)                //总视频控制器 - Center Video Controller
 		routerList4.POST("/class/list", VideoController.GetVideoClassList)     //视频类型控制器 - Video Class Controller
 		routerList4.POST("/search/list", VideoController.SearchVideoClassList) //视频搜索控制器 - Video Search Controller
+		routerList4.POST("/upload", VideoController.UploadVideo_StreamFile)    //视频上传 - Video Upload
 	}
 
 	//用户收藏路由 - Relation Route
@@ -102,7 +103,7 @@ func Router(router *gin.Engine) *gin.Engine {
 	//文件映射 - Map File
 	routerList7 := router.Group("/file").Use(JwtMiddleware.JwtMiddleware())
 	{
-		routerList7.Static("/avatar", UploadUtils.GetUploadFilePath("user.userAvatar")) //映射头像文件夹 - Map avatar folder
+		routerList7.Static("/avatar", UploadUtils.GetFilePath("user.userAvatar")) //映射头像文件夹 - Map avatar folder
 	}
 
 	//后台路由 - Admin Route

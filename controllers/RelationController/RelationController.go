@@ -26,7 +26,11 @@ import (
  */
 func GetRelationList(ctx *gin.Context) {
 	requestBody := RelationModel.RelationRequest{}
-	ctx.BindJSON(&requestBody)
+	err := ctx.BindJSON(&requestBody)
+	if err != nil {
+		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "600", "参数错误 - Parameter error"))
+		return
+	}
 
 	page := requestBody.Page
 	size := requestBody.Size
@@ -57,7 +61,11 @@ func GetRelationList(ctx *gin.Context) {
  */
 func FindRelationClassList(ctx *gin.Context) {
 	requestBody := RelationModel.RelationRequestClass{}
-	ctx.BindJSON(&requestBody)
+	err := ctx.BindJSON(&requestBody)
+	if err != nil {
+		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "600", "参数错误 - Parameter error"))
+		return
+	}
 
 	page := requestBody.Page
 	size := requestBody.Size
@@ -93,7 +101,11 @@ func FindRelationClassList(ctx *gin.Context) {
  */
 func SearchRelationClassList(ctx *gin.Context) {
 	requestBody := RelationModel.RelationRequestSearch{}
-	ctx.BindJSON(&requestBody)
+	err := ctx.BindJSON(&requestBody)
+	if err != nil {
+		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "600", "参数错误 - Parameter error"))
+		return
+	}
 
 	page := requestBody.Page
 	size := requestBody.Size
@@ -128,7 +140,11 @@ func SearchRelationClassList(ctx *gin.Context) {
  */
 func RelationVideo(ctx *gin.Context) {
 	requestBody := RelationModel.RelationRequestBody{}
-	ctx.BindJSON(&requestBody)
+	err := ctx.BindJSON(&requestBody)
+	if err != nil {
+		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "600", "参数错误 - Parameter error"))
+		return
+	}
 	uid := JwtMiddleware.GetTokenUID(ctx)
 	vid := requestBody.Vid
 	rows := RelationServices.IsRelation(uid, vid)
@@ -153,7 +169,11 @@ func RelationVideo(ctx *gin.Context) {
  */
 func RemoveRelation(ctx *gin.Context) {
 	requestBody := RelationModel.RelationRequestBody{}
-	ctx.BindJSON(&requestBody)
+	err := ctx.BindJSON(&requestBody)
+	if err != nil {
+		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "600", "参数错误 - Parameter error"))
+		return
+	}
 	uid := JwtMiddleware.GetTokenUID(ctx)
 	vid := requestBody.Vid
 	result := RelationServices.DeleteRelation(uid, vid)

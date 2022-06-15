@@ -25,7 +25,11 @@ import (
  */
 func GetVideoDetail(ctx *gin.Context) {
 	requestBody := WatchModel.WatchRequest{}
-	ctx.BindJSON(&requestBody)
+	err := ctx.BindJSON(&requestBody)
+	if err != nil {
+		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "600", "参数错误 - Parameter error"))
+		return
+	}
 	vid := requestBody.Vid
 	uid := JwtMiddleware.GetTokenUID(ctx)
 	videoData := WatchServices.GetVideoDetail(vid)
@@ -43,7 +47,11 @@ func GetVideoDetail(ctx *gin.Context) {
  */
 func PlusVideoWatch(ctx *gin.Context) {
 	requestBody := WatchModel.WatchRequest{}
-	ctx.BindJSON(&requestBody)
+	err := ctx.BindJSON(&requestBody)
+	if err != nil {
+		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "600", "参数错误 - Parameter error"))
+		return
+	}
 	vid := requestBody.Vid
 	result := WatchServices.PlusVideoWatch(vid)
 	if result != 1 {

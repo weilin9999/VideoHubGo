@@ -12,8 +12,11 @@ import (
 	"VideoHubGo/models/VideoModel"
 	"VideoHubGo/services/VideoServices"
 	"VideoHubGo/utils/JsonUtils"
+	"VideoHubGo/utils/UploadUtils"
 	"github.com/gin-gonic/gin"
+	"io"
 	"net/http"
+	"os"
 )
 
 /**
@@ -26,7 +29,11 @@ import (
  */
 func GetVideoList(ctx *gin.Context) {
 	requestBody := VideoModel.VideoRequest{}
-	ctx.BindJSON(&requestBody)
+	err := ctx.BindJSON(&requestBody)
+	if err != nil {
+		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "600", "参数错误 - Parameter error"))
+		return
+	}
 
 	page := requestBody.Page
 	size := requestBody.Size
@@ -70,7 +77,11 @@ func GetVideoList(ctx *gin.Context) {
  */
 func GetVideoClassList(ctx *gin.Context) {
 	requestBody := VideoModel.VideoRequestClass{}
-	ctx.BindJSON(&requestBody)
+	err := ctx.BindJSON(&requestBody)
+	if err != nil {
+		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "600", "参数错误 - Parameter error"))
+		return
+	}
 	cid := requestBody.Cid
 	page := requestBody.Page
 	size := requestBody.Size
@@ -110,7 +121,11 @@ func GetVideoClassList(ctx *gin.Context) {
  */
 func SearchVideoClassList(ctx *gin.Context) {
 	requestBody := VideoModel.VideoRequestSearch{}
-	ctx.BindJSON(&requestBody)
+	err := ctx.BindJSON(&requestBody)
+	if err != nil {
+		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "600", "参数错误 - Parameter error"))
+		return
+	}
 	cid := requestBody.Cid
 	key := requestBody.Key
 	page := requestBody.Page
@@ -131,4 +146,38 @@ func SearchVideoClassList(ctx *gin.Context) {
 	var videoData, count = VideoServices.SearchVideoList_Class(cid, key, size, offset)
 	rData := map[string]interface{}{"list": videoData, "count": count}
 	ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "200", rData))
+}
+
+/**
+ * @Descripttion: 视频上传 - Video Upload
+ * @Author: William Wu
+ * @Date: 2022/06/15 上午 11:09
+ * @Param: File
+ * @Return: Json
+ */
+func UploadVideo_StreamFile(ctx *gin.Context) {
+	file, header, err := ctx.Request.FormFile("file")
+	if err != nil {
+		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "600", "参数错误 - Parameter error"))
+		return
+	}
+	savePath := UploadUtils.GetFilePath("video.saveFile")
+	save, err := os.OpenFile(savePath+header.Filename, os.O_CREATE|os.O_RDWR, 0600)
+	for {
+		buf := make([]byte, 1024*2)
+		read, err := file.Read(buf)
+		if err != nil && err != io.EOF {
+			ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "201", "视频上传出现异常 - Abnormal video uploading"))
+			return
+		}
+		if read == 0 {
+			break
+		}
+		_, err = save.Write(buf)
+		if err != nil {
+			ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "202", "视频存储过程出现异常 - Exception in video stored procedure"))
+			return
+		}
+	}
+	ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "200", "视频上传成功 - Video upload succeeded"))
 }
