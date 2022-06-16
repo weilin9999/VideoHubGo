@@ -9,14 +9,18 @@ package VideoController
 
 import (
 	"VideoHubGo/cache/VideoCache"
+	"VideoHubGo/middlewares/JwtMiddleware"
 	"VideoHubGo/models/VideoModel"
 	"VideoHubGo/services/VideoServices"
 	"VideoHubGo/utils/JsonUtils"
 	"VideoHubGo/utils/UploadUtils"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"io"
 	"net/http"
 	"os"
+	"path"
+	"strconv"
 )
 
 /**
@@ -31,7 +35,7 @@ func GetVideoList(ctx *gin.Context) {
 	requestBody := VideoModel.VideoRequest{}
 	err := ctx.BindJSON(&requestBody)
 	if err != nil {
-		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "600", "参数错误 - Parameter error"))
+		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(600, "参数错误 - Parameter error", ""))
 		return
 	}
 
@@ -79,7 +83,7 @@ func GetVideoClassList(ctx *gin.Context) {
 	requestBody := VideoModel.VideoRequestClass{}
 	err := ctx.BindJSON(&requestBody)
 	if err != nil {
-		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "600", "参数错误 - Parameter error"))
+		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(600, "参数错误 - Parameter error", ""))
 		return
 	}
 	cid := requestBody.Cid
@@ -123,7 +127,7 @@ func SearchVideoClassList(ctx *gin.Context) {
 	requestBody := VideoModel.VideoRequestSearch{}
 	err := ctx.BindJSON(&requestBody)
 	if err != nil {
-		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "600", "参数错误 - Parameter error"))
+		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(600, "参数错误 - Parameter error", ""))
 		return
 	}
 	cid := requestBody.Cid
@@ -157,17 +161,40 @@ func SearchVideoClassList(ctx *gin.Context) {
  */
 func UploadVideo_StreamFile(ctx *gin.Context) {
 	file, header, err := ctx.Request.FormFile("file")
+	detail := ctx.PostForm("detail")
+	cid := ctx.PostForm("cid")
+	recid, err := strconv.Atoi(cid)
+	uid := JwtMiddleware.GetTokenUID(ctx)
 	if err != nil {
-		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "600", "参数错误 - Parameter error"))
+		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(602, "cid基本参数错误 - CID Base Parameter error", ""))
+		return
+	}
+	if err != nil {
+		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(600, "文件参数错误 - File Parameter error", ""))
+		return
+	}
+	if len(detail) < 1 {
+		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(601, "detail基本参数错误 - Detail Base Parameter error", ""))
 		return
 	}
 	savePath := UploadUtils.GetFilePath("video.saveFile")
-	save, err := os.OpenFile(savePath+header.Filename, os.O_CREATE|os.O_RDWR, 0600)
+	fileSuffix := path.Ext(header.Filename)
+	if fileSuffix != ".mp4" {
+		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(201, "文件类型不符合要求 - Document type does not meet requirements", ""))
+		return
+	}
+	saveVid := VideoServices.UploadVideo(uid, detail, recid)
+	fmt.Println(saveVid)
+	save, err := os.OpenFile(savePath+strconv.Itoa(saveVid)+fileSuffix, os.O_CREATE|os.O_RDWR, 0600)
+	if err != nil {
+		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(202, "读取文件流失败 - Failed to read file stream", ""))
+		return
+	}
 	for {
 		buf := make([]byte, 1024*2)
 		read, err := file.Read(buf)
 		if err != nil && err != io.EOF {
-			ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "201", "视频上传出现异常 - Abnormal video uploading"))
+			ctx.JSON(http.StatusOK, JsonUtils.JsonResult(203, "视频上传出现异常 - Abnormal video uploading", ""))
 			return
 		}
 		if read == 0 {
@@ -175,9 +202,10 @@ func UploadVideo_StreamFile(ctx *gin.Context) {
 		}
 		_, err = save.Write(buf)
 		if err != nil {
-			ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "202", "视频存储过程出现异常 - Exception in video stored procedure"))
+			ctx.JSON(http.StatusOK, JsonUtils.JsonResult(204, "视频存储过程出现异常 - Exception in video stored procedure", ""))
 			return
 		}
 	}
-	ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "200", "视频上传成功 - Video upload succeeded"))
+	rData := map[string]interface{}{"vid": saveVid}
+	ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "视频上传成功 - Video upload succeeded", rData))
 }

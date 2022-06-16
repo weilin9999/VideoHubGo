@@ -101,9 +101,10 @@ func Router(router *gin.Engine) *gin.Engine {
 		routerList6.POST("plus", WatchController.PlusVideoWatch) //增加视频流量 - Increase video traffic
 	}
 	//文件映射 - Map File
-	routerList7 := router.Group("/file").Use(JwtMiddleware.JwtMiddleware())
+	routerList7 := router.Group("/file")
 	{
 		routerList7.Static("/avatar", UploadUtils.GetFilePath("user.userAvatar")) //映射头像文件夹 - Map avatar folder
+		routerList7.Static("/video", UploadUtils.GetFilePath("video.saveFile"))   //映射视频文件夹 - Map video folder
 	}
 
 	//后台路由 - Admin Route

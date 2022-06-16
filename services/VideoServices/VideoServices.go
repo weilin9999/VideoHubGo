@@ -10,6 +10,7 @@ package VideoServices
 import (
 	"VideoHubGo/models/VideoModel"
 	"VideoHubGo/utils/DataBaseUtils"
+	"time"
 )
 
 var db = DataBaseUtils.GoDB()
@@ -87,4 +88,42 @@ func SearchVideoList_Class(cid int, key string, size int, offset int) ([]VideoMo
 		db.Table("videodata").Where("isdelete = ? AND cid = ? AND detail LIKE ?", 0, cid, "%"+key+"%").Order("vid DESC").Limit(size).Count(&count).Offset(offset).Find(&videoData)
 	}
 	return videoData, int(count)
+}
+
+/**
+ * @Descripttion: 视频预上传存入数据库 - Video pre upload stored in database
+ * @Author: William Wu
+ * @Date: 2022/06/15 下午 05:22
+ * @Param: detail (string)
+ * @Return: vid (int)
+ */
+func UploadVideo(uid int, detail string, cid int) int {
+	videoData := VideoModel.Video{}
+	videoData.Detail = detail
+	videoData.Cid = cid
+	videoData.Create_Time = time.Now()
+	videoData.Update_Time = time.Now()
+	delVid := FindIsdeleteVideoVid()
+	if delVid != 0 {
+		videoData.Vid = delVid
+		videoData.Isdelete = 0
+		videoData.Watch = 0
+		videoData.Vtime = ""
+		db.Table("videodata").Save(&videoData)
+	} else {
+		db.Table("videodata").Create(&videoData)
+	}
+	return videoData.Vid
+}
+
+/**
+ * @Descripttion: 查询已经软删除的视频VID - Query Isdeleted Video VID
+ * @Author: William Wu
+ * @Date: 2022/06/15 下午 05:32
+ * @Return: vid (int)
+ */
+func FindIsdeleteVideoVid() int {
+	videoData := VideoModel.Video{}
+	db.Table("videodata").Where("isdelete = ?", 1).First(&videoData)
+	return videoData.Vid
 }

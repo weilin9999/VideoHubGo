@@ -28,7 +28,7 @@ func GetRelationList(ctx *gin.Context) {
 	requestBody := RelationModel.RelationRequest{}
 	err := ctx.BindJSON(&requestBody)
 	if err != nil {
-		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "600", "参数错误 - Parameter error"))
+		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(600, "参数错误 - Parameter error", ""))
 		return
 	}
 
@@ -63,7 +63,7 @@ func FindRelationClassList(ctx *gin.Context) {
 	requestBody := RelationModel.RelationRequestClass{}
 	err := ctx.BindJSON(&requestBody)
 	if err != nil {
-		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "600", "参数错误 - Parameter error"))
+		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(600, "参数错误 - Parameter error", ""))
 		return
 	}
 
@@ -103,7 +103,7 @@ func SearchRelationClassList(ctx *gin.Context) {
 	requestBody := RelationModel.RelationRequestSearch{}
 	err := ctx.BindJSON(&requestBody)
 	if err != nil {
-		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "600", "参数错误 - Parameter error"))
+		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(600, "参数错误 - Parameter error", ""))
 		return
 	}
 
@@ -142,7 +142,7 @@ func RelationVideo(ctx *gin.Context) {
 	requestBody := RelationModel.RelationRequestBody{}
 	err := ctx.BindJSON(&requestBody)
 	if err != nil {
-		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "600", "参数错误 - Parameter error"))
+		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(600, "参数错误 - Parameter error", ""))
 		return
 	}
 	uid := JwtMiddleware.GetTokenUID(ctx)
@@ -171,7 +171,7 @@ func RemoveRelation(ctx *gin.Context) {
 	requestBody := RelationModel.RelationRequestBody{}
 	err := ctx.BindJSON(&requestBody)
 	if err != nil {
-		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "600", "参数错误 - Parameter error"))
+		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(600, "参数错误 - Parameter error", ""))
 		return
 	}
 	uid := JwtMiddleware.GetTokenUID(ctx)

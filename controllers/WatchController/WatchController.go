@@ -27,7 +27,7 @@ func GetVideoDetail(ctx *gin.Context) {
 	requestBody := WatchModel.WatchRequest{}
 	err := ctx.BindJSON(&requestBody)
 	if err != nil {
-		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "600", "参数错误 - Parameter error"))
+		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(600, "参数错误 - Parameter error", ""))
 		return
 	}
 	vid := requestBody.Vid
@@ -49,7 +49,7 @@ func PlusVideoWatch(ctx *gin.Context) {
 	requestBody := WatchModel.WatchRequest{}
 	err := ctx.BindJSON(&requestBody)
 	if err != nil {
-		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "600", "参数错误 - Parameter error"))
+		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(600, "参数错误 - Parameter error", ""))
 		return
 	}
 	vid := requestBody.Vid

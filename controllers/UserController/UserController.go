@@ -15,7 +15,6 @@ import (
 	"VideoHubGo/utils/JsonUtils"
 	"VideoHubGo/utils/LogUtils"
 	"VideoHubGo/utils/UploadUtils"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"path"
@@ -36,7 +35,7 @@ func UserLogin(ctx *gin.Context) {
 	userData := UserModel.User{}
 	err := ctx.BindJSON(&userData)
 	if err != nil {
-		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "600", "参数错误 - Parameter error"))
+		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(600, "参数错误 - Parameter error", ""))
 		return
 	}
 	if userData.Account == "" || userData.Password == "" {
@@ -84,7 +83,7 @@ func UserRegister(ctx *gin.Context) {
 	userEntity := UserModel.UserRegister{}
 	err := ctx.BindJSON(&userEntity)
 	if err != nil {
-		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "600", "参数错误 - Parameter error"))
+		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(600, "参数错误 - Parameter error", ""))
 		return
 	}
 	if ok, _ := regexp.MatchString("^[a-zA-Z0-9]{4,16}$", userEntity.Account); !ok {
@@ -133,7 +132,7 @@ func UserUpdatePassword(ctx *gin.Context) {
 	userData := UserModel.UserUpdatePassword{}
 	err := ctx.BindJSON(&userData)
 	if err != nil {
-		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "600", "参数错误 - Parameter error"))
+		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(600, "参数错误 - Parameter error", ""))
 		return
 	}
 	if userData.Password != userData.RePassword {
@@ -171,7 +170,6 @@ func UploadAvatar(ctx *gin.Context) {
 		}
 		fileType := path.Ext(file.Filename)
 		if fileType != ".png" && fileType != ".jpg" && fileType != ".jpeg" && fileType != ".gif" {
-			fmt.Println(fileType)
 			ctx.JSON(http.StatusOK, JsonUtils.JsonResult(203, "文件类型不符合要求 - Document type does not meet requirements", ""))
 			return
 		}

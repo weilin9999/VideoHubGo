@@ -18,6 +18,7 @@ import (
  */
 type Video struct {
 	Vid         int `gorm:"primaryKey" json:"vid"`
+	Uid         int
 	Detail      string
 	Watch       int
 	Vtime       string
@@ -34,6 +35,7 @@ type Video struct {
  */
 type VideoRe struct {
 	Vid         int       `json:"vid"`
+	Uid         int       `json:"uid"`
 	Detail      string    `json:"detail"`
 	Watch       int       `json:"watch"`
 	Vtime       string    `json:"vtime"`
