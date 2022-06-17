@@ -34,6 +34,7 @@ files:
   video: #视频存放路径 - Video Storage Path
     saveFile: "F:/Desktop/GoTest/" #视频存储位置 - Video Storage Location
     tempFile: "F:/Desktop/GoTest/" #视频临时存储位置 - Temporary Video Storage Location
+    coverFile: "F:/Desktop/GoTest/" #视频封面存储位置 - Video Cover Storage Location
 
 #JWT 设置
 #JWT Configuration

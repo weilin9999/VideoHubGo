@@ -14,7 +14,6 @@ import (
 	"VideoHubGo/services/VideoServices"
 	"VideoHubGo/utils/JsonUtils"
 	"VideoHubGo/utils/UploadUtils"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"io"
 	"net/http"
@@ -184,7 +183,6 @@ func UploadVideo_StreamFile(ctx *gin.Context) {
 		return
 	}
 	saveVid := VideoServices.UploadVideo(uid, detail, recid)
-	fmt.Println(saveVid)
 	save, err := os.OpenFile(savePath+strconv.Itoa(saveVid)+fileSuffix, os.O_CREATE|os.O_RDWR, 0600)
 	if err != nil {
 		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(202, "读取文件流失败 - Failed to read file stream", ""))
