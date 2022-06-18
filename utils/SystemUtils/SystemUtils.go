@@ -8,8 +8,10 @@
 package SystemUtils
 
 import (
+	"VideoHubGo/models/SystemModel"
 	"VideoHubGo/utils/LogUtils"
 	"bytes"
+	"github.com/shirou/gopsutil/disk"
 	"os/exec"
 	"runtime"
 )
@@ -67,4 +69,27 @@ func RunWindowsCommand(cmd string) (string, error) {
 		return "", errRun
 	}
 	return out.String(), errRun
+}
+
+/**
+ * @Descripttion: 获取磁盘信息 - Get Disk Info
+ * @Author: William Wu
+ * @Date: 2022/06/17 下午 06:18
+ * @Param: filePath (string)
+ * @Return: disk.UsageStat
+ */
+func GetDiskInfo(filePath string) (SystemModel.UsageStat, error) {
+	info, err := disk.Usage(filePath)
+	var ret SystemModel.UsageStat
+	ret.Path = info.Path
+	ret.Fstype = info.Fstype
+	ret.Total = info.Total
+	ret.Free = info.Free
+	ret.Used = info.Used
+	ret.UsedPercent = info.UsedPercent
+	ret.InodesTotal = info.InodesTotal
+	ret.InodesUsed = info.InodesUsed
+	ret.InodesFree = info.InodesFree
+	ret.InodesUsedPercent = info.InodesUsedPercent
+	return ret, err
 }

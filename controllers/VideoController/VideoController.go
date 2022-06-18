@@ -8,7 +8,7 @@
 package VideoController
 
 import (
-	"VideoHubGo/cache/VideoCache"
+	"VideoHubGo/caches/VideoCache"
 	"VideoHubGo/middlewares/JwtMiddleware"
 	"VideoHubGo/models/VideoModel"
 	"VideoHubGo/services/VideoServices"

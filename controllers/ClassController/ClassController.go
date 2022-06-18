@@ -8,7 +8,7 @@
 package ClassController
 
 import (
-	"VideoHubGo/cache/ClassCache"
+	"VideoHubGo/caches/ClassCache"
 	"VideoHubGo/services/ClassServices"
 	"VideoHubGo/utils/JsonUtils"
 	"github.com/gin-gonic/gin"
