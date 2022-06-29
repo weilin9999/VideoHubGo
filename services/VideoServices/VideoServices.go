@@ -25,7 +25,7 @@ var db = DataBaseUtils.GoDB()
  */
 func FindVideoList(size int, offset int) []VideoModel.VideoRe {
 	var videoData []VideoModel.VideoRe
-	db.Table("videodata").Where("isdelete = ?", 0).Order("vid DESC").Limit(size).Offset(offset).Find(&videoData)
+	db.Select("videodata.vid,videodata.uid,videodata.detail,videodata.watch,videodata.vtime,videodata.create_time,userdata.username").Table("videodata").Joins("JOIN userdata ON videodata.uid = userdata.uid").Where("videodata.isdelete = ?", 0).Order("videodata.vid DESC").Limit(size).Offset(offset).Find(&videoData)
 	return videoData
 }
 
@@ -52,7 +52,7 @@ func GetCountVideoList() int {
  */
 func FindVideoInClass(cid int, size int, offset int) []VideoModel.VideoRe {
 	var videoData []VideoModel.VideoRe
-	db.Table("videodata").Where("isdelete = ? and cid = ?", 0, cid).Order("vid DESC").Limit(size).Offset(offset).Find(&videoData)
+	db.Select("videodata.vid,videodata.uid,videodata.detail,videodata.watch,videodata.vtime,videodata.create_time,userdata.username").Table("videodata").Joins("JOIN userdata ON videodata.uid = userdata.uid").Where("videodata.isdelete = ? AND videodata.cid = ?", 0, cid).Order("videodata.vid DESC").Limit(size).Offset(offset).Find(&videoData)
 	return videoData
 }
 
@@ -83,9 +83,9 @@ func SearchVideoList_Class(cid int, key string, size int, offset int) ([]VideoMo
 	var videoData []VideoModel.VideoRe
 	var count int64
 	if cid == 0 {
-		db.Table("videodata").Where("isdelete = ? AND detail LIKE ?", 0, key+"%").Order("vid DESC").Limit(size).Offset(offset).Count(&count).Find(&videoData)
+		db.Select("videodata.vid,videodata.uid,videodata.detail,videodata.watch,videodata.vtime,videodata.create_time,userdata.username").Table("videodata").Joins("JOIN userdata ON videodata.uid = userdata.uid").Where("videodata.isdelete = ? AND videodata.detail LIKE ?", 0, key+"%").Order("videodata.vid DESC").Limit(size).Offset(offset).Count(&count).Find(&videoData)
 	} else {
-		db.Table("videodata").Where("isdelete = ? AND cid = ? AND detail LIKE ?", 0, cid, "%"+key+"%").Order("vid DESC").Limit(size).Count(&count).Offset(offset).Find(&videoData)
+		db.Select("videodata.vid,videodata.uid,videodata.detail,videodata.watch,videodata.vtime,videodata.create_time,userdata.username").Table("videodata").Joins("JOIN userdata ON videodata.uid = userdata.uid").Where("videodata.isdelete = ? AND videodata.cid = ? AND videodata.detail LIKE ?", 0, cid, "%"+key+"%").Order("videodata.vid DESC").Limit(size).Offset(offset).Count(&count).Find(&videoData)
 	}
 	return videoData, int(count)
 }

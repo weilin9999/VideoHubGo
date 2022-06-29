@@ -36,6 +36,7 @@ type Video struct {
 type VideoRe struct {
 	Vid         int       `json:"vid"`
 	Uid         int       `json:"uid"`
+	Username    string    `json:"username"`
 	Detail      string    `json:"detail"`
 	Watch       int       `json:"watch"`
 	Vtime       string    `json:"vtime"`

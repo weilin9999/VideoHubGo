@@ -54,14 +54,14 @@ func GetVideoList(ctx *gin.Context) {
 
 	var videoData = VideoCache.VideoGetListCache(page, size)
 	count := VideoCache.VideoGetCount()
-	redcount := VideoCache.GetReidsVideoListCount()
+	//redcount := VideoCache.GetReidsVideoListCount()
 
-	if videoData == nil && count != redcount {
+	if videoData == nil {
 		//查询数据库数据 - Find Sql Data
 		videoData = VideoServices.FindVideoList(size, offset)
 		//缓存到Redis里 - Cache Redis
 		VideoCache.VideoWriteListCache(videoData)
-		count := VideoServices.GetCountVideoList()
+		count = VideoServices.GetCountVideoList()
 		VideoCache.VideoSaveCountList(count)
 	}
 

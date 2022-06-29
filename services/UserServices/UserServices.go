@@ -11,7 +11,9 @@ import (
 	"VideoHubGo/models/UserModel"
 	"VideoHubGo/utils/DataBaseUtils"
 	"VideoHubGo/utils/EncryptionUtils"
+	"VideoHubGo/utils/FileUtils"
 	"VideoHubGo/utils/LogUtils"
+	"VideoHubGo/utils/UploadUtils"
 	uuid "github.com/satori/go.uuid"
 	"time"
 )
@@ -62,10 +64,10 @@ func RegisterUser(account string, password string, username string) int {
 	userData.Isuploader = 0
 	userData.Isadmin = 0
 	userData.Avatar = ""
+	userData.Create_Time = time.Now()
 	isDeleteUid := FindIsDeleteUser()
 	if isDeleteUid != 0 {
 		userData.Uid = isDeleteUid
-		userData.Create_Time = time.Now()
 		if err := db.Table("userdata").Save(&userData).Error; err != nil {
 			LogUtils.Logger("[数据库错误 SQL Error]在操作用户注册更新时产生异常：" + err.Error())
 			return 4
@@ -110,6 +112,9 @@ func UserUploadAvatar(userId int, fileTpye string) string {
 	uuidKey := uuid.NewV4()
 	nowTime := time.Now().Format("2006-1-2 15:04:05.000")
 	uuidValue := uuid.NewV5(uuidKey, nowTime).String()
+	userData := UserModel.User{}
+	db.Table("userdata").Where("uid = ?", userId).First(&userData)
+	FileUtils.DeleteFile(UploadUtils.GetFilePath("user.userAvatar") + "/" + userData.Avatar)
 	db.Table("userdata").Where("uid = ?", userId).Update("avatar", uuidValue+fileTpye)
 	return uuidValue + fileTpye
 }

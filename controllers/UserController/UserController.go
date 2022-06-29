@@ -68,7 +68,7 @@ func UserLogin(ctx *gin.Context) {
 		return
 	}
 
-	rData := map[string]interface{}{"token": token}
+	rData := map[string]interface{}{"token": token, "username": userData.Username, "avatar": userData.Avatar, "upload": userData.Isuploader, "account": userData.Account}
 	ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "200", rData))
 }
 
@@ -97,7 +97,7 @@ func UserRegister(ctx *gin.Context) {
 		return
 	}
 	if !nicknameRegexp.MatchString(userEntity.Username) {
-		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(207, "用户名不符合要求! - Username is not allow", ""))
+		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(207, "该用户名已被占用! - The user name is already occupied", ""))
 		return
 	}
 	if ok, _ := regexp.MatchString("^[a-zA-Z0-9]{4,16}$", userEntity.Password); !ok {
@@ -112,7 +112,7 @@ func UserRegister(ctx *gin.Context) {
 	} else if res == 3 {
 		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(203, "注册用户名已存在 - Register Username Already Exists ", ""))
 	} else if res == 4 {
-		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(203, "注册个更新时产生异常 - Exception Occurred During Registration Update", ""))
+		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(201, "注册个更新时产生异常 - Exception Occurred During Registration Update", ""))
 	} else {
 		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(204, "注册时产生异常 - Exception Occurred During Registration", ""))
 	}
@@ -135,7 +135,7 @@ func UserUpdatePassword(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(600, "参数错误 - Parameter error", ""))
 		return
 	}
-	if userData.Password != userData.RePassword {
+	if userData.NewPassword != userData.RePassword {
 		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(201, "两次密码不一致! - Second is Inconsistent", ""))
 		return
 	}
@@ -178,7 +178,7 @@ func UploadAvatar(ctx *gin.Context) {
 		filePath := filepath.Join(UploadUtils.GetFilePath("user.userAvatar"), fileName)
 		err := ctx.SaveUploadedFile(file, filePath)
 		if err != nil {
-			ctx.JSON(http.StatusOK, JsonUtils.JsonResult(201, "在存储头像时出现了异常 - An exception occurred while storing the Avatar", ""))
+			ctx.JSON(http.StatusOK, JsonUtils.JsonResult(204, "在存储头像时出现了异常 - An exception occurred while storing the Avatar", ""))
 			LogUtils.Logger("异常错误-Error：头像保存处理时产生 - Generated when saving the Avatar ：" + err.Error())
 			return
 		}

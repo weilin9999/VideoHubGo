@@ -12,7 +12,6 @@ import (
 	"VideoHubGo/utils/LogUtils"
 	"VideoHubGo/utils/RedisUtils"
 	"encoding/json"
-	"fmt"
 	"github.com/gomodule/redigo/redis"
 	"strconv"
 )
@@ -35,10 +34,7 @@ func VideoWriteListCache(videoData []VideoModel.VideoRe) {
 		conn.Send("ZADD", "videodata", v.Vid, string(jsonTemp))
 	}
 	conn.Flush()
-	_, err := conn.Receive()
-	if err != nil {
-		LogUtils.Logger("[Redis操作]Redis存储失败-VideoWriteList操作中")
-	}
+	conn.Receive()
 }
 
 /**
@@ -49,6 +45,7 @@ func VideoWriteListCache(videoData []VideoModel.VideoRe) {
  * @Param: size (int)
  * @Return: VideoModel VideoRe
  */
+
 func VideoGetListCache(page int, size int) []VideoModel.VideoRe {
 
 	startId := (page * size) - size
@@ -62,11 +59,10 @@ func VideoGetListCache(page int, size int) []VideoModel.VideoRe {
 		tempdata := VideoModel.VideoRe{}
 		errd := json.Unmarshal(v.([]byte), &tempdata)
 		if errd != nil {
-			fmt.Println(err)
+			LogUtils.Logger("[Redis操作] 获取视频数据时出现异常：" + err.Error())
 		}
 		tempVideo = append(tempVideo, tempdata)
 	}
-
 	return tempVideo
 }
 
@@ -77,10 +73,7 @@ func VideoGetListCache(page int, size int) []VideoModel.VideoRe {
  * @Param: count (int)
  */
 func VideoSaveCountList(count int) {
-	_, err := conn.Do("set", "videocount", count)
-	if err != nil {
-		LogUtils.Logger("[Redis操作] 存储视频总数时出现异常：" + err.Error())
-	}
+	conn.Do("set", "videocount", count)
 }
 
 /**
@@ -91,7 +84,7 @@ func VideoSaveCountList(count int) {
 func VideoGetCount() int {
 	count, err := redis.Int(conn.Do("get", "videocount"))
 	if err != nil {
-		LogUtils.Logger("[Redis操作] 获取视频总数时出现异常：" + err.Error())
+		return 0
 	}
 	return count
 }
@@ -104,7 +97,7 @@ func VideoGetCount() int {
 func GetReidsVideoListCount() int {
 	count, err := redis.Int(conn.Do("zcard", "videodata"))
 	if err != nil {
-		LogUtils.Logger("[Redis操作] 获取Rediso中的视频总数时出现异常：" + err.Error())
+		return -1
 	}
 	return count
 }
@@ -116,10 +109,7 @@ func GetReidsVideoListCount() int {
  * @Param: count (int)
  */
 func VideoSaveClassCountList(cid int, count int) {
-	_, err := conn.Do("set", "classcount"+strconv.Itoa(cid), count)
-	if err != nil {
-		LogUtils.Logger("[Redis操作] 存储视频类型总数时出现异常：" + err.Error())
-	}
+	conn.Do("set", "classcount"+strconv.Itoa(cid), count)
 }
 
 /**
@@ -128,9 +118,6 @@ func VideoSaveClassCountList(cid int, count int) {
  * @Date: 2022/06/07 下午 03:21
  */
 func VideoGetClassCount(cid int) int {
-	count, err := redis.Int(conn.Do("get", "classcount"+strconv.Itoa(cid)))
-	if err != nil {
-		LogUtils.Logger("[Redis操作] 获取视频类型总数时出现异常：" + err.Error())
-	}
+	count, _ := redis.Int(conn.Do("get", "classcount"+strconv.Itoa(cid)))
 	return count
 }

@@ -34,10 +34,7 @@ func ClassWriteCache(classData []ClassModel.ClassRe) {
 		conn.Send("ZADD", "classdata", v.Cid, string(jsonTemp))
 	}
 	conn.Flush()
-	_, err := conn.Receive()
-	if err != nil {
-		LogUtils.Logger("[Redis操作]Redis存储失败-ClassWriteCache操作中")
-	}
+	conn.Receive()
 }
 
 /**

@@ -14,6 +14,7 @@ import (
 	"VideoHubGo/controllers/UserController"
 	"VideoHubGo/controllers/VideoController"
 	"VideoHubGo/controllers/WatchController"
+	"VideoHubGo/middlewares/CorsMiddleware"
 	"VideoHubGo/middlewares/JwtMiddleware"
 	"VideoHubGo/middlewares/NoRouteMiddleware"
 	"VideoHubGo/utils/LogUtils"
@@ -55,6 +56,8 @@ func Router(router *gin.Engine) *gin.Engine {
 
 	router.MaxMultipartMemory = int64(maxSize << 20)
 
+	router.Use(CorsMiddleware.Cors())
+
 	//用户路由 - User Router
 	routerList1 := router.Group("/user")
 	{
@@ -92,6 +95,7 @@ func Router(router *gin.Engine) *gin.Engine {
 		routerList5.POST("/search/list", RelationController.SearchRelationClassList) //收藏搜索控制器 - Relation Search Controller
 		routerList5.POST("/add", RelationController.RelationVideo)                   //添加用户收藏 - Add User Relation
 		routerList5.POST("/delete", RelationController.RemoveRelation)               //取消用户收藏 - Delete User Relation
+		routerList5.POST("/is", RelationController.IsRelation)                       //检查用户是否已经收藏 - Check User Is Already Relation
 	}
 
 	//视频详细路由 - Video Detail Route
@@ -105,6 +109,7 @@ func Router(router *gin.Engine) *gin.Engine {
 	{
 		routerList7.Static("/avatar", UploadUtils.GetFilePath("user.userAvatar")) //映射头像文件夹 - Map avatar folder
 		routerList7.Static("/video", UploadUtils.GetFilePath("video.saveFile"))   //映射视频文件夹 - Map video folder
+		routerList7.Static("/cover", UploadUtils.GetFilePath("video.coverFile"))  //映射视频封面文件夹 - Map video cover folder
 	}
 
 	//后台路由 - Admin Route

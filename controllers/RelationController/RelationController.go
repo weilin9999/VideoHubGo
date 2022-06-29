@@ -150,10 +150,11 @@ func RelationVideo(ctx *gin.Context) {
 	rows := RelationServices.IsRelation(uid, vid)
 	if rows == 0 {
 		result := RelationServices.AddRelation(uid, vid)
-		if result != 1 {
-			ctx.JSON(http.StatusOK, JsonUtils.JsonResult(201, "在添加收藏时产生了未知的异常 - An unknown exception occurred while adding a collection", ""))
+		if result == 0 {
+			ctx.JSON(http.StatusOK, JsonUtils.JsonResult(202, "在添加收藏时产生了未知的异常 - An unknown exception occurred while adding a collection", ""))
 		}
-		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "200", ""))
+		rData := map[string]interface{}{"relation": result}
+		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "200", rData))
 	} else {
 		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(201, "你已经收藏过该视频 - You have already collected this video", ""))
 	}
@@ -181,4 +182,31 @@ func RemoveRelation(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(201, "在删除收藏时产生了未知的异常 - An unknown exception occurred while deleting a collection", ""))
 	}
 	ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "200", ""))
+}
+
+/**
+ * @Descripttion: 检查用户是否已经收藏 - Check User Is Already Relation
+ * @Author: William Wu
+ * @Date: 2022/06/25 下午 11:07
+ * @Param: 用户ID - uid (int)
+ * @Param: 视频ID - vid (int)
+ * @Return: Json
+ */
+func IsRelation(ctx *gin.Context) {
+	requestBody := RelationModel.RelationRequestBody{}
+	err := ctx.BindJSON(&requestBody)
+	if err != nil {
+		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(600, "参数错误 - Parameter error", ""))
+		return
+	}
+	uid := JwtMiddleware.GetTokenUID(ctx)
+	vid := requestBody.Vid
+	rows := RelationServices.IsRelation(uid, vid)
+	if rows == 0 {
+		rData := map[string]interface{}{"relation": rows}
+		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "你没有收藏该视频 - You not already collected this video", rData))
+	} else {
+		rData := map[string]interface{}{"relation": rows}
+		ctx.JSON(http.StatusOK, JsonUtils.JsonResult(201, "你已经收藏过该视频 - You have already collected this video", rData))
+	}
 }

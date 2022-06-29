@@ -28,7 +28,7 @@ var db = DataBaseUtils.GoDB()
 func FindRelationByVideoList(uid int, size int, offset int) ([]VideoModel.VideoRe, int) {
 	var videoData []VideoModel.VideoRe
 	var count int64
-	db.Select("videodata.vid,videodata.detail,videodata.watch,videodata.vtime,videodata.cid,videodata.create_time").Table("relation").Joins("LEFT JOIN videodata ON relation.vid = videodata.vid").Where(" relation.uid = ? AND relation.isdelete = ? AND videodata.isdelete = ?", uid, 0, 0).Order("videodata.vid DESC").Limit(size).Offset(offset).Count(&count).Find(&videoData)
+	db.Select("videodata.vid,videodata.detail,videodata.watch,videodata.vtime,videodata.cid,videodata.create_time,userdata.username").Table("relation").Joins("JOIN videodata ON relation.vid = videodata.vid").Joins("JOIN userdata ON relation.uid = userdata.uid").Where(" relation.uid = ? AND relation.isdelete = ? AND videodata.isdelete = ?", uid, 0, 0).Order("videodata.vid DESC").Limit(size).Offset(offset).Count(&count).Find(&videoData)
 	return videoData, int(count)
 }
 
@@ -45,7 +45,7 @@ func FindRelationByVideoList(uid int, size int, offset int) ([]VideoModel.VideoR
 func FindRelationByVideoList_Class(uid int, cid int, size int, offset int) ([]VideoModel.VideoRe, int) {
 	var videoData []VideoModel.VideoRe
 	var count int64
-	db.Select("videodata.vid,videodata.detail,videodata.watch,videodata.vtime,videodata.cid,videodata.create_time").Table("relation").Joins("LEFT JOIN videodata ON relation.vid = videodata.vid").Where(" relation.uid = ? AND videodata.cid = ? AND relation.isdelete = ? AND videodata.isdelete = ?", uid, cid, 0, 0).Order("videodata.vid DESC").Limit(size).Offset(offset).Count(&count).Find(&videoData)
+	db.Select("videodata.vid,videodata.detail,videodata.watch,videodata.vtime,videodata.cid,videodata.create_time,userdata.username").Table("relation").Joins("JOIN videodata ON relation.vid = videodata.vid").Joins("JOIN userdata ON relation.uid = userdata.uid").Where(" relation.uid = ? AND videodata.cid = ? AND relation.isdelete = ? AND videodata.isdelete = ?", uid, cid, 0, 0).Order("videodata.vid DESC").Limit(size).Offset(offset).Count(&count).Find(&videoData)
 	return videoData, int(count)
 }
 
@@ -64,9 +64,9 @@ func SearchRelationByVideoList_Class(uid int, cid int, key string, size int, off
 	var videoData []VideoModel.VideoRe
 	var count int64
 	if cid == 0 {
-		db.Select("videodata.vid,videodata.detail,videodata.watch,videodata.vtime,videodata.cid,videodata.create_time").Table("relation").Joins("LEFT JOIN videodata ON relation.vid = videodata.vid").Where(" relation.uid = ? AND relation.isdelete = ? AND videodata.isdelete = ? AND videodata.detail LIKE ?", uid, 0, 0, key+"%").Order("videodata.vid DESC").Limit(size).Offset(offset).Count(&count).Find(&videoData)
+		db.Select("videodata.vid,videodata.detail,videodata.watch,videodata.vtime,videodata.cid,videodata.create_time,userdata.username").Table("relation").Joins("JOIN videodata ON relation.vid = videodata.vid").Joins("JOIN userdata ON relation.uid = userdata.uid").Where(" relation.uid = ? AND relation.isdelete = ? AND videodata.isdelete = ? AND videodata.detail LIKE ?", uid, 0, 0, key+"%").Order("videodata.vid DESC").Limit(size).Offset(offset).Count(&count).Find(&videoData)
 	} else {
-		db.Select("videodata.vid,videodata.detail,videodata.watch,videodata.vtime,videodata.cid,videodata.create_time").Table("relation").Joins("LEFT JOIN videodata ON relation.vid = videodata.vid").Where(" relation.uid = ? AND videodata.cid = ? AND relation.isdelete = ? AND videodata.isdelete = ? AND videodata.detail LIKE ?", uid, cid, 0, 0, "%"+key+"%").Order("videodata.vid DESC").Limit(size).Offset(offset).Count(&count).Find(&videoData)
+		db.Select("videodata.vid,videodata.detail,videodata.watch,videodata.vtime,videodata.cid,videodata.create_time,userdata.username").Table("relation").Joins("JOIN videodata ON relation.vid = videodata.vid").Joins("JOIN userdata ON relation.uid = userdata.uid").Where(" relation.uid = ? AND videodata.cid = ? AND relation.isdelete = ? AND videodata.isdelete = ? AND videodata.detail LIKE ?", uid, cid, 0, 0, "%"+key+"%").Order("videodata.vid DESC").Limit(size).Offset(offset).Count(&count).Find(&videoData)
 	}
 	return videoData, int(count)
 }
@@ -97,7 +97,7 @@ func AddRelation(uid int, vid int) int {
 			return 0
 		}
 	}
-	return 1
+	return reData.Id
 }
 
 /**
