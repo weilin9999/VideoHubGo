@@ -9,14 +9,15 @@ package RedisUtils
 
 import (
 	"VideoHubGo/utils/LogUtils"
+	"context"
 	"fmt"
-	"github.com/gomodule/redigo/redis"
+	"github.com/go-redis/redis/v8"
 	"github.com/spf13/viper"
 	"os"
 	"time"
 )
 
-var RedisPool *redis.Pool
+var RedisClient *redis.Client
 
 /**
  * @Descripttion: Redis连接 - Redis Connection
@@ -43,23 +44,23 @@ func init() {
 	host := config.GetString("redis.host")
 	port := config.GetString("redis.port")
 	password := config.GetString("redis.password")
-	maxIdle := config.GetInt("redis.maxIdle")
+	db := config.GetInt("redis.db")
 	maxActive := config.GetInt("redis.maxActive")
-	idleTimeout := config.GetInt("redis.idleTimeout")
-	option := redis.DialPassword(password)
 	//拼接连接地址 - Splicing Connection Address
 	server := fmt.Sprintf("%s:%s", host, port)
 
-	RedisPool = &redis.Pool{
-		MaxIdle:     maxIdle,                    //最初的连接数量 - Number Of Initial Connections
-		MaxActive:   maxActive,                  //连接池最大连接数量,不确定可以用0（0表示自动定义），按需分配 - Max Connections
-		IdleTimeout: time.Duration(idleTimeout), //连接关闭时间 300秒 （300秒不使用自动关闭） - Connections Timeout
-		Dial: func() (redis.Conn, error) { //要连接的Redis数据库 - Need To Connection Redis DataBase
-			conn, err := redis.Dial("tcp", server, option)
-			if err != nil {
-				conn.Close()
-			}
-			return conn, err
-		},
+	RedisClient = redis.NewClient(&redis.Options{
+		Addr:     server,
+		Password: password,
+		DB:       db,
+		PoolSize: maxActive,
+	})
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	_, err = RedisClient.Ping(ctx).Result()
+	if err != nil {
+		LogUtils.Logger("[Redis启动失败-Redis start fail] 错误-Error：" + err.Error())
 	}
+
 }

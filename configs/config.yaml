@@ -21,9 +21,8 @@ redis:
   host: 127.0.0.1 #连接地址 - Connection Address
   port: 6379 #端口 - Port
   password: #密码 - Password
-  maxIdle: 16 #最初连接数 - Number Of Initial Connections
-  maxActive: 0 #最大连接数 - Max Connections
-  idleTimeout: 300 #连接关闭时间 - Connections Timeout
+  db: 0 #默认连接的池 use default DB
+  maxActive: 100 #最大连接数 - Max Connections
 
 #文件池路径
 #File Pool Path
