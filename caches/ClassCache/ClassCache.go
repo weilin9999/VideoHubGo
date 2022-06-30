@@ -11,12 +11,15 @@ import (
 	"VideoHubGo/models/ClassModel"
 	"VideoHubGo/utils/LogUtils"
 	"VideoHubGo/utils/RedisUtils"
+	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/gomodule/redigo/redis"
+	"github.com/go-redis/redis/v8"
+	"time"
 )
 
-var conn = RedisUtils.RedisPool.Get()
+var conn = RedisUtils.RedisClient
+var ctx = context.Background()
 
 /**
  * @Descripttion: 视频分类存入到Redis - Video Class Save Redis
@@ -31,10 +34,12 @@ func ClassWriteCache(classData []ClassModel.ClassRe) {
 		if err != nil {
 			LogUtils.Logger("[Redis操作]Json转换失败")
 		}
-		conn.Send("ZADD", "classdata", v.Cid, string(jsonTemp))
+		conn.ZAdd(ctx, "classdata", &redis.Z{
+			Score:  float64(v.Cid),
+			Member: jsonTemp,
+		})
 	}
-	conn.Flush()
-	conn.Receive()
+	conn.ExpireAt(ctx, "classdata", time.Now().Add(2*time.Hour))
 }
 
 /**
@@ -44,13 +49,11 @@ func ClassWriteCache(classData []ClassModel.ClassRe) {
  * @Return: ClassModel ClassRe
  */
 func ClassGetListCache() []ClassModel.ClassRe {
-
-	res2, err := redis.Values(conn.Do("zcard", "classdata"))
+	res2, err := conn.ZRange(ctx, "classdata", 0, -1).Result()
 	var tempClass []ClassModel.ClassRe
-
 	for _, v := range res2 {
 		tempdata := ClassModel.ClassRe{}
-		errd := json.Unmarshal(v.([]byte), &tempdata)
+		errd := json.Unmarshal([]byte(v), &tempdata)
 		if errd != nil {
 			fmt.Println(err)
 		}
