@@ -54,11 +54,17 @@ func LoginAdmin(account string, password string) UserModel.User {
 func GetVideoList(vid string, detail string, cid int, size int, offset int) ([]VideoModel.VideoAdminRe, int) {
 	var videoData []VideoModel.VideoAdminRe
 	var count int64
+	querySQL := db.Table("videodata")
 	if cid != 0 {
-		db.Table("videodata").Where("isdelete = ? AND vid LIKE ? AND cid = ? AND detail LIKE ?", 0, vid+"%", cid, detail+"%").Order("vid DESC").Limit(size).Offset(offset).Count(&count).Find(&videoData)
-	} else {
-		db.Table("videodata").Where("isdelete = ? AND vid LIKE ? AND detail LIKE ?", 0, vid+"%", detail+"%").Order("vid DESC").Limit(size).Offset(offset).Count(&count).Find(&videoData)
+		querySQL.Where("cid = ?", cid)
 	}
+	if vid != "" {
+		querySQL.Where("vid LIKE ?", "%"+vid+"%")
+	}
+	if detail != "" {
+		querySQL.Where("detail LIKE ?", "%"+detail+"%")
+	}
+	querySQL.Where("isdelete = ?", 0).Order("vid DESC").Limit(size).Offset(offset).Count(&count).Find(&videoData)
 	return videoData, int(count)
 }
 
@@ -138,11 +144,17 @@ func DeleteVideoInformation(vid int) (int, string) {
 func GetUserList(uid int, account string, username string, size int, offset int) ([]UserModel.UserAdminRe, int) {
 	var userData []UserModel.UserAdminRe
 	var count int64
+	querySQL := db.Table("userdata")
 	if uid != 0 {
-		db.Table("userdata").Where("isdelete = ? AND uid = ? AND account LIKE ? AND username LIKE ?", 0, uid, account+"%", username+"%").Limit(size).Offset(offset).Count(&count).Find(&userData)
-	} else {
-		db.Table("userdata").Where("isdelete = ? AND account LIKE ? AND username LIKE ?", 0, account+"%", username+"%").Limit(size).Offset(offset).Count(&count).Find(&userData)
+		querySQL.Where("uid = ?", uid)
 	}
+	if account != "" {
+		querySQL.Where("account LIKE ?", "%"+account+"%")
+	}
+	if username != "" {
+		querySQL.Where("username LIKE ?", "%"+username+"%")
+	}
+	querySQL.Where("isdelete = ?", 0).Limit(size).Offset(offset).Count(&count).Find(&userData)
 	return userData, int(count)
 }
 
@@ -267,11 +279,14 @@ func IsDeleteClassInformation() int {
 func GetClassList(cid int, classname string, size int, offset int) ([]ClassModel.ClassAdminRe, int) {
 	var classData []ClassModel.ClassAdminRe
 	var count int64
+	querySQL := db.Table("vclass")
 	if cid != 0 {
-		db.Table("vclass").Where("isdelete = ? AND cid = ? AND classname LIKE ?", 0, cid, classname+"%").Order("cid DESC").Limit(size).Offset(offset).Count(&count).Find(&classData)
-	} else {
-		db.Table("vclass").Where("isdelete = ? AND classname LIKE ?", 0, classname+"%").Order("cid DESC").Limit(size).Offset(offset).Count(&count).Find(&classData)
+		querySQL.Where("cid = ?", cid)
 	}
+	if classname != "" {
+		querySQL.Where("classname LIKE ?", "%"+classname+"%")
+	}
+	querySQL.Where("isdelete = ?", 0).Order("cid DESC").Limit(size).Offset(offset).Count(&count).Find(&classData)
 	return classData, int(count)
 }
 

@@ -108,7 +108,7 @@ func GetVideoList(ctx *gin.Context) {
 		size = 100
 	}
 	offset := size * (page - 1)
-	var videoData, count = AdminServices.GetVideoList(vid, detail, cid, size, offset)
+	videoData, count := AdminServices.GetVideoList(vid, detail, cid, size, offset)
 	rData := map[string]interface{}{"list": videoData, "count": count}
 	ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "200", rData))
 }
@@ -139,7 +139,7 @@ func GetNoCidVideoList(ctx *gin.Context) {
 		size = 100
 	}
 	offset := size * (page - 1)
-	var videoData, count = AdminServices.GetNoCidVideoList(size, offset)
+	videoData, count := AdminServices.GetNoCidVideoList(size, offset)
 	rData := map[string]interface{}{"list": videoData, "count": count}
 	ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "200", rData))
 }
@@ -287,8 +287,8 @@ func GetUserList(ctx *gin.Context) {
 		size = 100
 	}
 	offset := size * (page - 1)
-	var classData, count = AdminServices.GetUserList(uid, account, username, size, offset)
-	rData := map[string]interface{}{"list": classData, "count": count}
+	userData, count := AdminServices.GetUserList(uid, account, username, size, offset)
+	rData := map[string]interface{}{"list": userData, "count": count}
 	ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "200", rData))
 }
 
@@ -436,7 +436,7 @@ func GetClassList(ctx *gin.Context) {
 		size = 100
 	}
 	offset := size * (page - 1)
-	var classData, count = AdminServices.GetClassList(cid, classname, size, offset)
+	classData, count := AdminServices.GetClassList(cid, classname, size, offset)
 	rData := map[string]interface{}{"list": classData, "count": count}
 	ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "200", rData))
 }

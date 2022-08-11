@@ -133,7 +133,7 @@ func GetVideoClassList(ctx *gin.Context) {
 		return
 	}
 
-	var videoData = VideoServices.FindVideoInClass(cid, size, offset)
+	videoData := VideoServices.FindVideoInClass(cid, size, offset)
 	rData := map[string]interface{}{"list": videoData, "count": count}
 	ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "200", rData))
 }
@@ -172,7 +172,7 @@ func SearchVideoClassList(ctx *gin.Context) {
 		cid = 0
 	}
 	offset := size * (page - 1)
-	var videoData, count = VideoServices.SearchVideoList_Class(cid, key, size, offset)
+	videoData, count := VideoServices.SearchVideoList_Class(cid, key, size, offset)
 	rData := map[string]interface{}{"list": videoData, "count": count}
 	ctx.JSON(http.StatusOK, JsonUtils.JsonResult(200, "200", rData))
 }
