@@ -1,6 +1,9 @@
 # VideoHubGo
 The projectis  make GoLang program,this project uses GO+Gin+Gorm+Redis 该项目使用Go语言编写，使用GO+Gin+Gorm+Redis框架
 
+## 警告 - Waring
+由于个人操作失误导致GitHub项目被清空一次，现阶段的具体介绍参数会在8月份展开与更新
+
 ## 项目详细 - Object detail
 本项目采用GO语言来编写后端，其中使用了Gorm、Gin、Redis的技术来实现后端的基本的数据库、缓存与请求的需求，其中Redis主要运用于视频数据的缓存上和分类数据的缓存上，高频的数据是具有Redis的缓存与高效存储，数据库主要使用MySQL进行数据的存储，视频转码技术运用了FFmpeg的工具，代码运行已经经过测试与优化。
 
